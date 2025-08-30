@@ -7,7 +7,7 @@ enum FileNodeType {
     Added = 'a',
     Deleted = 'd',
     Modified = 'm',
-    Renamed = 'n',
+    Renamed = 'r',
     Untracked = 'u',
 }
 

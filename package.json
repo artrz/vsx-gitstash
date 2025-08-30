@@ -189,6 +189,19 @@
                     "default": "${filename} [${type}] - ${filepath}",
                     "description": "Specifies file data to be set on clipboard\nAvailable tokens:\n${oldName} - the previous name\nSame than file.labelContent"
                 },
+                "gitstash.explorer.items.file.sorting": {
+                    "type": "string",
+                    "enum": [
+                        "path",
+                        "name"
+                    ],
+                    "enumDescriptions": [
+                        "Sort by path",
+                        "Sort by name"
+                    ],
+                    "default": "path",
+                    "description": "Configures the way stash files are listed"
+                },
                 "gitstash.explorer.items.renamedFile.labelContent": {
                     "type": "string",
                     "default": "${filename}",

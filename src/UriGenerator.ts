@@ -43,7 +43,7 @@ export default class UriGenerator {
      */
     public createForNodePath(fileNode: FileNode): Uri | undefined {
         const currentPath = fileNode.isRenamed
-            ? `${fileNode.parent.path}/${fileNode.oldName}`
+            ? fileNode.oldPath
             : fileNode.path
 
         return fs.existsSync(currentPath) ? Uri.file(currentPath) : undefined

@@ -30,6 +30,7 @@ export default class Config extends BaseConfig {
         expItemsFileDescription: 'explorer.items.file.descriptionContent',
         expItemsFileTooltip: 'explorer.items.file.tooltipContent',
         expItemsFileToClipboard: 'explorer.items.file.to-clipboardContent',
+        expItemsFileSorting: 'explorer.items.file.sorting',
 
         expItemsRenamedFileLabel: 'explorer.items.renamedFile.labelContent',
         expItemsRenamedFileDescription: 'explorer.items.renamedFile.descriptionContent',

@@ -180,7 +180,7 @@ export default class {
      */
     private parseFileLabel(fileNode: FileNode, template: string): string {
         return template
-            .replace('${filename}', path.basename(fileNode.name))
+            .replace('${filename}', fileNode.fileName)
             .replace('${oldFilename}', fileNode.oldName ? path.basename(fileNode.oldName) : '')
             .replace('${filepath}', `${path.dirname(fileNode.name)}/`)
             .replace('${type}', this.getTypeLabel(fileNode))
@@ -194,7 +194,7 @@ export default class {
      */
     public getDiffTitle(fileNode: FileNode, diffHint: boolean | undefined): string {
         return this.config.get<string>('editor.diffTitleFormat')
-            .replace('${filename}', path.basename(fileNode.name))
+            .replace('${filename}', fileNode.fileName)
             .replace('${filepath}', `${path.dirname(fileNode.name)}/`)
             .replace('${dateTimeLong}', DateFormat.toFullyReadable(fileNode.date))
             .replace('${dateTimeSmall}', DateFormat.toDateTimeSmall(fileNode.date))

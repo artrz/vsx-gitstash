@@ -12,6 +12,7 @@ export default class FileNode extends Node {
         protected _name: string,
         protected _type: FileNodeType,
         protected _path: string,
+        protected _fileName: string,
         protected _parent: StashNode,
         protected _oldName?: string,
     ) {
@@ -26,11 +27,19 @@ export default class FileNode extends Node {
         return this._type
     }
 
+    public get fileName(): string {
+        return this._fileName
+    }
+
     /**
      * Gets the file path of the stashed file.
      */
     public get path(): string {
         return `${this._path}/${this._name}`
+    }
+
+    public get oldPath(): string {
+        return `${this._path}/${this._oldName}`
     }
 
     public get parent(): StashNode {

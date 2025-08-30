@@ -8,9 +8,6 @@ import Node from './Node'
 import RepositoryNode from './RepositoryNode'
 
 export default class StashNode extends Node {
-    protected _description: string
-    protected _branch: string | undefined
-
     constructor(
         subject: string,
         protected _index: number,
@@ -19,13 +16,12 @@ export default class StashNode extends Node {
         protected _hash: string,
         protected _shortHash: string,
         protected _parentHashes: string[],
+        protected _description: string,
+        protected _branch?: string,
         protected _note?: string,
         protected _children?: FileNode[],
     ) {
         super(subject)
-        const parts = /(^WIP\son|^On)\s([^:\s]+):\s(.*)/i.exec(subject) ?? []
-        this._description = parts.at(-1) ?? subject
-        this._branch = parts.at(-2)
     }
 
     /**

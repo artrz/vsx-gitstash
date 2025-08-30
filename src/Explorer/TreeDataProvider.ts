@@ -104,6 +104,19 @@ export default class implements TreeDataProvider<Node> {
 
         if (node instanceof StashNode) {
             return this.nodeContainer.getFiles(node).then((files) => {
+                const sort = this.config.get<string>('explorer.items.file.sorting')
+
+                if (sort === 'path') {
+                    files = files.sort((fileA, fileB) => {
+                        return fileA.path.localeCompare(fileB.path)
+                    })
+                }
+                else if (sort === 'name') {
+                    files = files.sort((fileA, fileB) => {
+                        return fileA.fileName.localeCompare(fileB.fileName)
+                    })
+                }
+
                 node.setChildren(files)
                 return this.prepareChildren(node, files)
             })

@@ -32,6 +32,11 @@ export default class NodeFactory {
      * @param stash the stash to use as base
      */
     public createStashNode(stash: Stash, parentNode: RepositoryNode): StashNode {
+        const parts = /(^WIP\son|^On)\s([^:\s]+):\s(.*)/i.exec(stash.subject) ?? []
+
+        const message = parts.at(-1) ?? stash.subject
+        const branch = parts.at(-2)
+
         return new StashNode(
             stash.subject,
             stash.index,
@@ -40,6 +45,8 @@ export default class NodeFactory {
             stash.hash,
             stash.shortHash,
             stash.parents,
+            message,
+            branch,
             stash.note,
         )
     }
@@ -56,7 +63,13 @@ export default class NodeFactory {
         file: string,
         parentNode: StashNode,
     ): FileNode {
-        return new FileNode(file, FileNodeType.Added, path, parentNode)
+        return new FileNode(
+            file,
+            FileNodeType.Added,
+            path,
+            basename(file),
+            parentNode,
+        )
     }
 
     /**
@@ -71,7 +84,13 @@ export default class NodeFactory {
         file: string,
         parentNode: StashNode,
     ): FileNode {
-        return new FileNode(file, FileNodeType.Deleted, path, parentNode)
+        return new FileNode(
+            file,
+            FileNodeType.Deleted,
+            path,
+            basename(file),
+            parentNode,
+        )
     }
 
     /**
@@ -86,7 +105,13 @@ export default class NodeFactory {
         file: string,
         parentNode: StashNode,
     ): FileNode {
-        return new FileNode(file, FileNodeType.Modified, path, parentNode)
+        return new FileNode(
+            file,
+            FileNodeType.Modified,
+            path,
+            basename(file),
+            parentNode,
+        )
     }
 
     /**
@@ -101,7 +126,13 @@ export default class NodeFactory {
         file: string,
         parentNode: StashNode,
     ): FileNode {
-        return new FileNode(file, FileNodeType.Untracked, path, parentNode)
+        return new FileNode(
+            file,
+            FileNodeType.Untracked,
+            path,
+            basename(file),
+            parentNode,
+        )
     }
 
     /**
@@ -116,7 +147,14 @@ export default class NodeFactory {
         file: RenameStash,
         parentNode: StashNode,
     ): FileNode {
-        return new FileNode(file.new, FileNodeType.Renamed, path, parentNode, file.old)
+        return new FileNode(
+            file.new,
+            FileNodeType.Renamed,
+            path,
+            basename(file.new),
+            parentNode,
+            file.old,
+        )
     }
 
     /**

@@ -119,6 +119,7 @@ Alternative way to diff the stashed file without its changes.
 | `gitstash.explorer.items.file.descriptionContent`         | Specifies the format for each file description . Available tokens: Same than file.labelContent |
 | `gitstash.explorer.items.file.tooltipContent`             | Specifies the format for each file tooltip . Available tokens: Same than file.labelContent |
 | `gitstash.explorer.items.file.to-clipboardContent`        | Specifies file data to be set on clipboard. Available tokens: Same than file.labelContent. `${oldName}` - the previous name |
+| `gitstash.explorer.items.file.sorting`                    | Defines how stash files will be sorted. |
 | `gitstash.explorer.items.renamedFile.labelContent`        | Specifies the format for each renamed file label. Available tokens: `${filename}` - the file name. `${oldFilename}` - the previous file name. `${filepath}` - the file path. `${type}` - the change type |
 | `gitstash.explorer.items.renamedFile.descriptionContent`  | Specifies the format for each renamed file description . Available tokens: Same than renamedFile.labelContent |
 | `gitstash.explorer.items.renamedFile.tooltipContent`      | Specifies the format for each renamed file tooltip . Available tokens: Same than renamedFile.labelContent |
@@ -159,6 +160,11 @@ When creating a PR, the title will be automatically linted with a [github workfl
 to ensure it's conformant with the [conventional commit structure](https://www.conventionalcommits.org/en/v1.0.0/).
 Failing to comply wont let the PR to merge. This is important because the versioning tool
 uses the commit messages to define the version change.
+
+
+## Testing
+
+Tests are located in `src/test/`. Run `npm test` to execute the test suite.
 
 
 ## Versioning and releasing
