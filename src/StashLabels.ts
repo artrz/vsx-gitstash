@@ -181,8 +181,8 @@ export default class {
         return template
             .replace('${filename}', fileNode.fileName)
             .replace('${oldFilename}', fileNode.oldFileName ?? '')
-            .replace('${filepath}', fileNode.subPath)
-            .replace('${oldFilepath}', fileNode.oldSubPath ?? '')
+            .replace('${filepath}', fileNode.subPath !== '.' ? fileNode.subPath : '')
+            .replace('${oldFilepath}', fileNode.oldSubPath !== '.' ? (fileNode.oldSubPath ?? '') : '')
             .replace('${type}', this.getTypeLabel(fileNode))
     }
 
