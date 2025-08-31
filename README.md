@@ -115,7 +115,7 @@ Alternative way to diff the stashed file without its changes.
 | `gitstash.explorer.items.stash.diffButton`                | Defines which comparison to display from a file diff button |
 | `gitstash.explorer.items.file.decoration`                 | Adds decorations to the tree items |
 | `gitstash.explorer.items.file.icons`                      | Defines the icon to show on files |
-| `gitstash.explorer.items.file.labelContent`               | Specifies the format for each file label. Available tokens: `${filename}` - the file name. `${filepath}` - the file path. `${type}` - the change type |
+| `gitstash.explorer.items.file.labelContent`               | Specifies the format for each file label. Available tokens: `${filename}` - the file name. `${filepath}` - the file path. `${type}` - the change type. `${oldFilename}` and `${oldFilepath}` for renamed files. |
 | `gitstash.explorer.items.file.descriptionContent`         | Specifies the format for each file description . Available tokens: Same than file.labelContent |
 | `gitstash.explorer.items.file.tooltipContent`             | Specifies the format for each file tooltip . Available tokens: Same than file.labelContent |
 | `gitstash.explorer.items.file.to-clipboardContent`        | Specifies file data to be set on clipboard. Available tokens: Same than file.labelContent. `${oldName}` - the previous name |
