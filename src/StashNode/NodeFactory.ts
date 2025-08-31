@@ -37,9 +37,9 @@ export default class NodeFactory {
         const branch = parts.at(-2)
 
         return new StashNode(
-            stash.subject,
             stash.index,
             parentNode,
+            stash.subject,
             stash.date,
             stash.hash,
             stash.shortHash,

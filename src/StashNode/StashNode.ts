@@ -9,9 +9,9 @@ import RepositoryNode from './RepositoryNode'
 
 export default class StashNode extends Node {
     constructor(
-        subject: string,
         protected _index: number,
         protected _parent: RepositoryNode,
+        protected _subject: string,
         protected _date: Date,
         protected _hash: string,
         protected _shortHash: string,
@@ -21,7 +21,7 @@ export default class StashNode extends Node {
         protected _note?: string,
         protected _children?: FileNode[],
     ) {
-        super(subject)
+        super(_subject)
     }
 
     /**
@@ -39,31 +39,21 @@ export default class StashNode extends Node {
     }
 
     /**
-     * Gets the node description.
-     */
-    public get description(): string {
-        return this._description
-    }
-
-    /**
-     * Gets the node branch name.
-     */
-    public get branch(): string | undefined {
-        return this._branch
-    }
-
-    /**
-     * Gets the hashes of the stash parents.
-     */
-    public get parentHashes(): string[] {
-        return this._parentHashes
-    }
-
-    /**
      * Gets the node parent index.
      */
     public get parent(): RepositoryNode {
         return this._parent
+    }
+
+    /**
+     * Gets the path of repository containing this stash.
+     */
+    public get path(): string {
+        return this.parent.path
+    }
+
+    public get subject(): string {
+        return this._subject
     }
 
     /**
@@ -88,17 +78,27 @@ export default class StashNode extends Node {
     }
 
     /**
-     * Gets the file path of the stashed file.
+     * Gets the hashes of the stash parents.
      */
-    public get path(): string {
-        return this._parent.path
+    public get parentHashes(): string[] {
+        return this._parentHashes
     }
 
     /**
-     * Gets the loaded children.
+     * Gets the node description.
      */
-    public get children(): FileNode[] | undefined {
-        return this._children
+    public get description(): string {
+        return this._description
+    }
+
+    /**
+     * Gets the node branch name.
+     * This relies on the default git behavior (prepending the branch name in the
+     * description). If a stash is manually created with `stash store -m msg` this
+     * most probably will be undefined (unless manually prepending 'On branchname: msg').
+     */
+    public get branch(): string | undefined {
+        return this._branch
     }
 
     /**
@@ -106,6 +106,13 @@ export default class StashNode extends Node {
      */
     public get note(): string | undefined {
         return this._note
+    }
+
+    /**
+     * Gets the loaded children.
+     */
+    public get children(): FileNode[] | undefined {
+        return this._children
     }
 
     /**
@@ -125,11 +132,7 @@ export default class StashNode extends Node {
         return this
     }
 
-    public toString() {
-        return `StashNode[${this.name}]`
-    }
-
     public get id(): string {
-        return `S.${this.parent.path}.${this.hash}`
+        return `S.${this.path}.${this.shortHash}`
     }
 }

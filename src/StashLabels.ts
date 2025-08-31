@@ -65,7 +65,7 @@ export default class {
             return node.path
         }
         if (node instanceof StashNode) {
-            return node.name
+            return node.subject
         }
         if (node instanceof FileNode) {
             return node.path
