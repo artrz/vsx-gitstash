@@ -4,17 +4,5 @@
  */
 
 export default abstract class Node {
-    constructor(
-        protected _name: string,
-    ) {
-    }
-
-    /**
-     * Gets the node name.
-     */
-    public get name(): string {
-        return this._name
-    }
-
     public abstract get id(): string
 }

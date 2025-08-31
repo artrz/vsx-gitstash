@@ -10,7 +10,7 @@ export default class MessageNode extends Node {
         protected _message: string,
         protected _parent?: Node,
     ) {
-        super(_message)
+        super()
     }
 
     public get message(): string {

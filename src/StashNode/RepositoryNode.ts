@@ -14,7 +14,7 @@ export default class RepositoryNode extends Node {
         protected _label?: string,
         protected _children?: StashNode[],
     ) {
-        super(_label ?? _dirName)
+        super()
     }
 
     /**

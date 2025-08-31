@@ -17,7 +17,7 @@ export default class FileNode extends Node {
         protected _oldSubPath?: string,
         protected _oldFileName?: string,
     ) {
-        super(`${_subPath}${path.sep}${_fileName}`)
+        super()
     }
 
     public get type(): FileNodeType {

@@ -21,7 +21,7 @@ export default class StashNode extends Node {
         protected _note?: string,
         protected _children?: FileNode[],
     ) {
-        super(_subject)
+        super()
     }
 
     /**
