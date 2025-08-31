@@ -74,26 +74,35 @@ export default class NodeContainer {
             stashNode.parentHashes.length > 2,
         ).then((stashedFiles: StashedFiles) => {
             const fileNodes: FileNode[] = []
-            const path = stashNode.path
 
-            stashedFiles.added.forEach((stashFile: string) => {
-                fileNodes.push(this.nodeFactory.createAddedFileNode(path, stashFile, stashNode))
+            stashedFiles.added.forEach((fileSubpath: string) => {
+                fileNodes.push(
+                    this.nodeFactory.createAddedFileNode(stashNode, fileSubpath),
+                )
             })
 
-            stashedFiles.modified.forEach((stashFile: string) => {
-                fileNodes.push(this.nodeFactory.createModifiedFileNode(path, stashFile, stashNode))
+            stashedFiles.modified.forEach((fileSubpath: string) => {
+                fileNodes.push(
+                    this.nodeFactory.createModifiedFileNode(stashNode, fileSubpath),
+                )
             })
 
-            stashedFiles.renamed.forEach((stashFile: RenameStash) => {
-                fileNodes.push(this.nodeFactory.createRenamedFileNode(path, stashFile, stashNode))
+            stashedFiles.renamed.forEach((fileSubpath: RenameStash) => {
+                fileNodes.push(
+                    this.nodeFactory.createRenamedFileNode(stashNode, fileSubpath),
+                )
             })
 
-            stashedFiles.untracked.forEach((stashFile: string) => {
-                fileNodes.push(this.nodeFactory.createUntrackedFileNode(path, stashFile, stashNode))
+            stashedFiles.untracked.forEach((fileSubpath: string) => {
+                fileNodes.push(
+                    this.nodeFactory.createUntrackedFileNode(stashNode, fileSubpath),
+                )
             })
 
-            stashedFiles.deleted.forEach((stashFile: string) => {
-                fileNodes.push(this.nodeFactory.createDeletedFileNode(path, stashFile, stashNode))
+            stashedFiles.deleted.forEach((fileSubpath: string) => {
+                fileNodes.push(
+                    this.nodeFactory.createDeletedFileNode(stashNode, fileSubpath),
+                )
             })
 
             return fileNodes
@@ -108,24 +117,38 @@ export default class NodeContainer {
      */
     public getFileContents(fileNode: FileNode, stage?: FileStage): Promise<string> {
         if (fileNode.isAdded) {
-            return this.stashGit.getStashContents(fileNode.parent.path, fileNode.parent.index, fileNode.name)
+            return this.stashGit.getStashContents(
+                fileNode.parent.path, fileNode.parent.index, fileNode.relativePath,
+            )
         }
         if (fileNode.isDeleted) {
-            return this.stashGit.getParentContents(fileNode.parent.path, fileNode.parent.index, fileNode.name)
+            return this.stashGit.getParentContents(
+                fileNode.parent.path, fileNode.parent.index, fileNode.relativePath,
+            )
         }
         if (fileNode.isModified) {
             return stage === FileStage.Parent
-                ? this.stashGit.getParentContents(fileNode.parent.path, fileNode.parent.index, fileNode.name)
-                : this.stashGit.getStashContents(fileNode.parent.path, fileNode.parent.index, fileNode.name)
+                ? this.stashGit.getParentContents(
+                    fileNode.parent.path, fileNode.parent.index, fileNode.relativePath,
+                )
+                : this.stashGit.getStashContents(
+                    fileNode.parent.path, fileNode.parent.index, fileNode.relativePath,
+                )
         }
         if (fileNode.isRenamed) {
             return stage === FileStage.Parent
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                ? this.stashGit.getParentContents(fileNode.parent.path, fileNode.parent.index, fileNode.oldName!)
-                : this.stashGit.getStashContents(fileNode.parent.path, fileNode.parent.index, fileNode.name)
+                ? this.stashGit.getParentContents(
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    fileNode.parent.path, fileNode.parent.index, fileNode.oldRelativePath!,
+                )
+                : this.stashGit.getStashContents(
+                    fileNode.parent.path, fileNode.parent.index, fileNode.relativePath,
+                )
         }
         if (fileNode.isUntracked) {
-            return this.stashGit.getThirdParentContents(fileNode.parent.path, fileNode.parent.index, fileNode.name)
+            return this.stashGit.getThirdParentContents(
+                fileNode.parent.path, fileNode.parent.index, fileNode.relativePath,
+            )
         }
 
         throw new Error(`Unsupported fileNode type: ${fileNode.type}`)

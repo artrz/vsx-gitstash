@@ -16,11 +16,5 @@ export default abstract class Node {
         return this._name
     }
 
-    public toString() {
-        return `Node[${this.name}]`
-    }
-
-    public get id(): string {
-        return `?.${this.toString()}`
-    }
+    public abstract get id(): string
 }

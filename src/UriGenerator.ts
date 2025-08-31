@@ -56,11 +56,11 @@ export default class UriGenerator {
      * @param stage the file stash stage
      */
     public async createForDiff(node: FileNode, stage?: FileStage): Promise<Uri> {
-        if (this.supportedBinaryFiles.includes(path.extname(node.name))) {
+        if (this.supportedBinaryFiles.includes(path.extname(node.fileName))) {
             return Uri.file(
                 this.createTmpFile(
                     await this.nodeContainer.getFileContents(node, stage),
-                    node.name,
+                    node.relativePath,
                 ).name,
             )
         }
@@ -79,8 +79,8 @@ export default class UriGenerator {
 
         const query = `cwd=${node.parent.path}`
             + `&index=${node.parent.index}`
-            + `&path=${node.name}`
-            + `&oldPath=${node.oldName}`
+            + `&path=${node.relativePath}`
+            + `&oldPath=${node.oldRelativePath}`
             + `&type=${node.type}`
             + `&side=${side ?? ''}`
             + `&t=${timestamp}`

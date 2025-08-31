@@ -108,7 +108,7 @@ export default class implements TreeDataProvider<Node> {
 
                 if (sort === 'path') {
                     files = files.sort((fileA, fileB) => {
-                        return fileA.path.localeCompare(fileB.path)
+                        return fileA.relativePath.localeCompare(fileB.relativePath)
                     })
                 }
                 else if (sort === 'name') {

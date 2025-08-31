@@ -103,7 +103,7 @@ export default class {
         const current = this.uriGenerator.createForNodePath(fileNode)
 
         if (!current) {
-            const name = fileNode.isRenamed ? fileNode.oldName : fileNode.name
+            const name = fileNode.isRenamed ? fileNode.oldRelativePath : fileNode.relativePath
             vscode.window.showWarningMessage(`File ${name} not found.`)
         }
 

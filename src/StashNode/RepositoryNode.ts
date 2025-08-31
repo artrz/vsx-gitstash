@@ -16,7 +16,7 @@ export default class RepositoryNode extends Node {
     }
 
     /**
-     * Gets the file path of the stashed file.
+     * Gets the path of the repository.
      */
     public get path(): string {
         return this._path

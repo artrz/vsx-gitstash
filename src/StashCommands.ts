@@ -199,7 +199,7 @@ export class StashCommands {
         const params = [
             'checkout',
             fileNode.parent.atIndex,
-            fileNode.name,
+            fileNode.relativePath,
         ]
 
         this.exec(fileNode.parent.path, params, 'Changes from file applied', fileNode)
@@ -212,7 +212,7 @@ export class StashCommands {
         const params = [
             'checkout',
             `${fileNode.parent.atIndex}^3`,
-            fileNode.name,
+            fileNode.relativePath,
         ]
 
         this.exec(fileNode.parent.path, params, 'File created', fileNode)

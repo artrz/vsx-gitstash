@@ -393,7 +393,7 @@ export class Commands {
         const parentLabel = this.stashLabels.getName(fileNode.parent)
 
         void vscode.window.showWarningMessage<vscode.MessageItem>(
-            `${parentLabel}\n\nApply changes on ${fileNode.name}?`,
+            `${parentLabel}\n\nApply changes on ${fileNode.relativePath}?`,
             { modal: true },
             { title: 'Yes' },
         )
@@ -414,7 +414,7 @@ export class Commands {
         const exists = fs.existsSync(fileNode.path)
 
         void vscode.window.showWarningMessage<vscode.MessageItem>(
-            `${parentLabel}\n\nCreate file ${fileNode.name}?${exists ? '\n\nThis will overwrite the current file' : ''}`,
+            `${parentLabel}\n\nCreate file ${fileNode.relativePath}?${exists ? '\n\nThis will overwrite the current file' : ''}`,
             { modal: true },
             { title: 'Yes' },
         )

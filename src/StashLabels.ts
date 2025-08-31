@@ -139,7 +139,7 @@ export default class {
             return node.name
         }
 
-        throw new Error(`getContent(): Unsupported Node: ${node.name}`)
+        throw new Error(`getContent(): Unsupported Node: ${node.id}`)
     }
 
     /**
@@ -181,8 +181,9 @@ export default class {
     private parseFileLabel(fileNode: FileNode, template: string): string {
         return template
             .replace('${filename}', fileNode.fileName)
-            .replace('${oldFilename}', fileNode.oldName ? path.basename(fileNode.oldName) : '')
-            .replace('${filepath}', `${path.dirname(fileNode.name)}/`)
+            .replace('${oldFilename}', fileNode.oldFileName ?? '')
+            .replace('${filepath}', fileNode.subPath)
+            .replace('${oldFilepath}', fileNode.oldSubPath ?? '')
             .replace('${type}', this.getTypeLabel(fileNode))
     }
 
@@ -195,7 +196,7 @@ export default class {
     public getDiffTitle(fileNode: FileNode, diffHint: boolean | undefined): string {
         return this.config.get<string>('editor.diffTitleFormat')
             .replace('${filename}', fileNode.fileName)
-            .replace('${filepath}', `${path.dirname(fileNode.name)}/`)
+            .replace('${filepath}', fileNode.subPath)
             .replace('${dateTimeLong}', DateFormat.toFullyReadable(fileNode.date))
             .replace('${dateTimeSmall}', DateFormat.toDateTimeSmall(fileNode.date))
             .replace('${dateSmall}', DateFormat.toDateSmall(fileNode.date))

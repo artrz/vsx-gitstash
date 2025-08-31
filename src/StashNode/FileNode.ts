@@ -3,28 +3,29 @@
  * GPL-3.0-only. See LICENSE.md in the project root for license details.
  */
 
+import * as path from 'path'
 import FileNodeType from './FileNodeType'
 import Node from './Node'
 import StashNode from './StashNode'
 
 export default class FileNode extends Node {
     constructor(
-        protected _name: string,
         protected _type: FileNodeType,
-        protected _path: string,
-        protected _fileName: string,
         protected _parent: StashNode,
-        protected _oldName?: string,
+        protected _subPath: string,
+        protected _fileName: string,
+        protected _oldSubPath?: string,
+        protected _oldFileName?: string,
     ) {
-        super(_name)
-    }
-
-    public get name(): string {
-        return this._name
+        super(`${_subPath}${path.sep}${_fileName}`)
     }
 
     public get type(): FileNodeType {
         return this._type
+    }
+
+    public get parent(): StashNode {
+        return this._parent
     }
 
     public get fileName(): string {
@@ -32,22 +33,44 @@ export default class FileNode extends Node {
     }
 
     /**
-     * Gets the file path of the stashed file.
+     * Gets the relative file base path, i.e. the relative path without filename.
+     */
+    public get subPath(): string {
+        return this._subPath
+    }
+
+    /**
+     * Gets the relative file path of the stashed file.
+     */
+    public get relativePath(): string {
+        return this.subPath !== '.'
+            ? `${this.subPath}${path.sep}${this.fileName}`
+            : this.fileName
+    }
+
+    /**
+     * Gets the absolute file path of the stashed file.
      */
     public get path(): string {
-        return `${this._path}/${this._name}`
+        return `${this.parent.path}${path.sep}${this.relativePath}`
+    }
+
+    public get oldFileName(): string | undefined {
+        return this._oldFileName
+    }
+
+    public get oldSubPath(): string | undefined {
+        return this._oldSubPath
+    }
+
+    public get oldRelativePath(): string | undefined {
+        return this.oldSubPath !== '.'
+            ? `${this.oldSubPath}${path.sep}${this.oldFileName}`
+            : this.oldFileName
     }
 
     public get oldPath(): string {
-        return `${this._path}/${this._oldName}`
-    }
-
-    public get parent(): StashNode {
-        return this._parent
-    }
-
-    public get oldName(): string | undefined {
-        return this._oldName
+        return `${this.parent.path}${path.sep}${this.oldRelativePath}`
     }
 
     public get date(): Date {
@@ -74,11 +97,8 @@ export default class FileNode extends Node {
         return this.type === FileNodeType.Untracked
     }
 
-    public toString() {
-        return `FileNode[${this.name}]`
-    }
-
     public get id(): string {
-        return `F-${this.type}.${this.parent.parent.path}.${this.parent.hash}.${this.name}`
+        return `F-${this.type}.${this.parent.path}`
+            + `.${this.parent.shortHash}.${this.relativePath}`
     }
 }

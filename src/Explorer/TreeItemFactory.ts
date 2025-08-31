@@ -48,7 +48,7 @@ export default class {
             return this.getFileItem(node)
         }
 
-        throw new Error(`getTreeItem() Invalid node ${node.name}`)
+        throw new Error(`getTreeItem() Invalid node ${node.id}`)
     }
 
     /**

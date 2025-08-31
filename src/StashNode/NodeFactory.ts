@@ -10,7 +10,7 @@ import FileNodeType from './FileNodeType'
 import MessageNode from './MessageNode'
 import RepositoryNode from './RepositoryNode'
 import StashNode from './StashNode'
-import { basename } from 'path'
+import { basename, dirname } from 'path'
 
 export default class NodeFactory {
     /**
@@ -33,7 +33,6 @@ export default class NodeFactory {
      */
     public createStashNode(stash: Stash, parentNode: RepositoryNode): StashNode {
         const parts = /(^WIP\son|^On)\s([^:\s]+):\s(.*)/i.exec(stash.subject) ?? []
-
         const message = parts.at(-1) ?? stash.subject
         const branch = parts.at(-2)
 
@@ -54,106 +53,73 @@ export default class NodeFactory {
     /**
      * Generates an index-added file node.
      *
-     * @param path       the file path
-     * @param file       the file name
-     * @param parentNode the parent node
+     * @param parentNode  the parent node
+     * @param fileSubpath the file path relative to the repository
      */
-    public createAddedFileNode(
-        path: string,
-        file: string,
-        parentNode: StashNode,
-    ): FileNode {
-        return new FileNode(
-            file,
-            FileNodeType.Added,
-            path,
-            basename(file),
-            parentNode,
-        )
+    public createAddedFileNode(parentNode: StashNode, fileSubpath: string): FileNode {
+        return this.createFileNode(parentNode, fileSubpath, FileNodeType.Added)
     }
 
     /**
      * Generates a deleted file node.
      *
-     * @param path       the file path
-     * @param file       the file name
-     * @param parentNode the parent node
+     * @param parentNode  the parent node
+     * @param fileSubpath the file path relative to the repository
      */
-    public createDeletedFileNode(
-        path: string,
-        file: string,
-        parentNode: StashNode,
-    ): FileNode {
-        return new FileNode(
-            file,
-            FileNodeType.Deleted,
-            path,
-            basename(file),
-            parentNode,
-        )
+    public createDeletedFileNode(parentNode: StashNode, fileSubpath: string): FileNode {
+        return this.createFileNode(parentNode, fileSubpath, FileNodeType.Deleted)
     }
 
     /**
      * Generates a modified file node.
      *
-     * @param path       the file path
-     * @param file       the file name
-     * @param parentNode the parent node
+     * @param parentNode  the parent node
+     * @param fileSubpath the file path relative to the repository
      */
-    public createModifiedFileNode(
-        path: string,
-        file: string,
-        parentNode: StashNode,
-    ): FileNode {
-        return new FileNode(
-            file,
-            FileNodeType.Modified,
-            path,
-            basename(file),
-            parentNode,
-        )
+    public createModifiedFileNode(parentNode: StashNode, fileSubpath: string): FileNode {
+        return this.createFileNode(parentNode, fileSubpath, FileNodeType.Modified)
     }
 
     /**
      * Generates an untracked file node.
      *
-     * @param path       the file path
-     * @param file       the file name
-     * @param parentNode the parent node
+     * @param parentNode  the parent node
+     * @param fileSubpath the file path relative to the repository
      */
-    public createUntrackedFileNode(
-        path: string,
-        file: string,
-        parentNode: StashNode,
-    ): FileNode {
-        return new FileNode(
-            file,
-            FileNodeType.Untracked,
-            path,
-            basename(file),
-            parentNode,
-        )
+    public createUntrackedFileNode(parentNode: StashNode, fileSubpath: string): FileNode {
+        return this.createFileNode(parentNode, fileSubpath, FileNodeType.Untracked)
     }
 
     /**
      * Generates a renamed file node.
      *
-     * @param path       the file path
-     * @param file       the new and old name on renamed file
-     * @param parentNode the parent node
+     * @param parentNode  the parent node
+     * @param fileSubpath the new and old name on renamed file
      */
-    public createRenamedFileNode(
-        path: string,
-        file: RenameStash,
-        parentNode: StashNode,
-    ): FileNode {
+    public createRenamedFileNode(parentNode: StashNode, fileSubpath: RenameStash): FileNode {
         return new FileNode(
-            file.new,
             FileNodeType.Renamed,
-            path,
-            basename(file.new),
             parentNode,
-            file.old,
+            dirname(fileSubpath.new),
+            basename(fileSubpath.new),
+            dirname(fileSubpath.old),
+            basename(fileSubpath.old),
+        )
+    }
+
+    /**
+     * Generates a file node.
+     *
+     * @param type        the fileNode type
+     * @param parentNode  the parent node
+     * @param fileSubpath the file path relative to the repository
+     */
+    private createFileNode(parentNode: StashNode, fileSubpath: string, type: FileNodeType): FileNode {
+        return new FileNode(
+            type,
+            parentNode,
+            dirname(fileSubpath),
+            basename(fileSubpath),
         )
     }
 
