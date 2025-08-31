@@ -135,7 +135,7 @@ export default class {
         }
 
         if (node instanceof MessageNode) {
-            return node.name
+            return node.message
         }
 
         throw new Error(`getContent(): Unsupported Node: ${node.id}`)

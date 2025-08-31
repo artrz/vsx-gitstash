@@ -7,10 +7,14 @@ import Node from './Node'
 
 export default class MessageNode extends Node {
     constructor(
-        protected _name: string,
+        protected _message: string,
         protected _parent?: Node,
     ) {
-        super(_name)
+        super(_message)
+    }
+
+    public get message(): string {
+        return this._message
     }
 
     /**
@@ -20,11 +24,7 @@ export default class MessageNode extends Node {
         return this._parent
     }
 
-    public toString() {
-        return `MessageNode[${this.name}]`
-    }
-
     public get id(): string {
-        return `M.${this.name}`
+        return `M.${this.message}`
     }
 }

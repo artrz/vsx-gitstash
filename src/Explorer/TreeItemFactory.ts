@@ -120,7 +120,7 @@ export default class {
     private getMessageItem(node: MessageNode): TreeItem {
         return {
             id: node.id,
-            label: node.name,
+            label: node.message,
             description: undefined,
             tooltip: undefined,
             iconPath: undefined,
