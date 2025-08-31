@@ -4,7 +4,6 @@
  */
 
 import * as DateFormat from './DateFormat'
-import * as path from 'path'
 import Config from './Config'
 import FileNode from './StashNode/FileNode'
 import Node from './StashNode/Node'
@@ -149,9 +148,9 @@ export default class {
      */
     private parseRepositoryLabel(repositoryNode: RepositoryNode, template: string): string {
         return template
-            .replace('${path}', `${path.dirname(repositoryNode.path)}/`)
-            .replace('${directory}', path.basename(repositoryNode.path))
-            .replace('${name}', repositoryNode.name)
+            .replace('${path}', repositoryNode.basePath)
+            .replace('${directory}', repositoryNode.dirName)
+            .replace('${name}', repositoryNode.label)
             .replace('${stashesCount}', this.getChildrenCount(repositoryNode))
     }
 

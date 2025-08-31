@@ -4,22 +4,36 @@
  */
 
 import Node from './Node'
+import * as path from 'path'
 import StashNode from './StashNode'
 
 export default class RepositoryNode extends Node {
     constructor(
-        protected _name: string,
-        protected _path: string,
-        protected _children: StashNode[] | undefined = undefined,
+        protected _basePath: string,
+        protected _dirName: string,
+        protected _label?: string,
+        protected _children?: StashNode[],
     ) {
-        super(_name)
+        super(_label ?? _dirName)
     }
 
     /**
      * Gets the path of the repository.
      */
     public get path(): string {
-        return this._path
+        return `${this.basePath}${path.sep}${this.dirName}`
+    }
+
+    public get basePath(): string {
+        return this._basePath
+    }
+
+    public get dirName(): string {
+        return this._dirName
+    }
+
+    public get label(): string {
+        return this._label ?? this.dirName
     }
 
     /**
@@ -44,10 +58,6 @@ export default class RepositoryNode extends Node {
     public setChildren(children: StashNode[]): this {
         this._children = children
         return this
-    }
-
-    public toString() {
-        return `RepositoryNode[${this.name}]`
     }
 
     public get id(): string {

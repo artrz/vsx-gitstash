@@ -23,7 +23,11 @@ export default class NodeFactory {
         // this happens on upper directories by negative search depth setting.
         const wsFolder = workspace.getWorkspaceFolder(Uri.file(path))
 
-        return new RepositoryNode(wsFolder?.name ?? basename(path), path)
+        return new RepositoryNode(
+            dirname(path),
+            basename(path),
+            wsFolder?.name,
+        )
     }
 
     /**
