@@ -97,7 +97,7 @@
                 },
                 "gitstash.explorer.items.stash.tooltipContent": {
                     "type": "string",
-                    "default": "#${index}  ${dateTimeLong}\n${branch}, ${ago}\n\n${description}",
+                    "default": "#${index}  ${shortHash}  ${branch}\n${dateTimeLong}\n${ago}\n${description}",
                     "description": "Specifies the format for each stash tooltip \nAvailable tokens:\nSame than stash.labelContent",
                     "editPresentation": "multilineText"
                 },

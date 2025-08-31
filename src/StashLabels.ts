@@ -162,6 +162,8 @@ export default class {
     private parseStashLabel(stashNode: StashNode, template: string): string {
         return template
             .replace('${index}', stashNode.index.toString())
+            .replace('${hash}', stashNode.hash)
+            .replace('${shortHash}', stashNode.shortHash)
             .replace('${branch}', stashNode.branch ?? 'n/a')
             .replace('${description}', stashNode.description)
             .replace('${dateTimeLong}', DateFormat.toFullyReadable(stashNode.date))
