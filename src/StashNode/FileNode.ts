@@ -43,9 +43,7 @@ export default class FileNode extends Node {
      * Gets the relative file path of the stashed file.
      */
     public get relativePath(): string {
-        return this.subPath !== '.'
-            ? `${this.subPath}${path.sep}${this.fileName}`
-            : this.fileName
+        return path.normalize(`${this.subPath}${path.sep}${this.fileName}`)
     }
 
     /**
@@ -64,9 +62,7 @@ export default class FileNode extends Node {
     }
 
     public get oldRelativePath(): string | undefined {
-        return this.oldSubPath !== '.'
-            ? `${this.oldSubPath}${path.sep}${this.oldFileName}`
-            : this.oldFileName
+        return path.normalize(`${this.oldSubPath}${path.sep}${this.oldFileName}`)
     }
 
     public get oldPath(): string {

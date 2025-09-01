@@ -11,7 +11,7 @@ import RepositoryNode from './StashNode/RepositoryNode'
 import StashNode from './StashNode/StashNode'
 import MessageNode from './Explorer/TreeNode/MessageNode'
 
-export default class {
+export default class StashLabels {
     private config: Config
 
     constructor(config: Config) {

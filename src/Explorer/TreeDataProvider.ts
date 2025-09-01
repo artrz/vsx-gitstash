@@ -94,53 +94,55 @@ export default class implements TreeDataProvider<Node> {
      * @see TreeDataProvider.getChildren
      */
     public getChildren(node?: Node): Thenable<Node[]> | Node[] {
-        if ((node instanceof RepositoryNode || node instanceof StashNode) && node.children) {
-            return this.prepareChildren(node, node.children)
-        }
-
         if (!node) {
             const eagerLoad: boolean = this.config.get('explorer.eagerLoadStashes')
             return this.nodeContainer.getRepositories(eagerLoad)
-                .then((repositories) => this.prepareChildren(node, repositories))
+                .then((repositories) => this.prepareChildren(undefined, repositories))
         }
 
         if (node instanceof RepositoryNode) {
-            return this.nodeContainer.getStashes(node).then((stashes) => {
-                return this.prepareChildren(node, stashes)
-            })
+            return node.children
+                ? Promise.resolve(this.prepareChildren(node, node.children))
+                : this.nodeContainer.getStashes(node)
+                    .then((stashes) => this.prepareChildren(node, stashes))
         }
 
         if (node instanceof StashNode) {
-            return this.nodeContainer.getFiles(node).then((files) => {
-                const sort = this.config.get<string>(this.config.key.expDisplayFileSorting)
-                let children: (DirectoryNode | FileNode)[] = []
+            return node.children
+                ? Promise.resolve(this.prepareChildren(node, node.children))
+                : this.nodeContainer.getFiles(node)
+                    .then((files) => {
+                        const sort = this.config.get<string>(this.config.key.expDisplayFileSorting)
+                        let children: (DirectoryNode | FileNode)[] = []
 
-                if (sort === 'name') {
-                    children = files.sort((fileA, fileB) => {
-                        return fileA.fileName.localeCompare(fileB.fileName)
-                    })
-                }
-                else if (sort === 'path') {
-                    children = files.sort((fileA, fileB) => {
-                        return fileA.relativePath.localeCompare(fileB.relativePath)
-                    })
-                }
-                else if (sort === 'tree') {
-                    files = files.sort((fileA, fileB) => {
-                        return fileA.relativePath.localeCompare(fileB.relativePath)
-                    })
-                    children = this.nodeContainer.makeDirectoryNode(node, files).children
-                }
+                        if (sort === 'name') {
+                            children = files.sort((fileA, fileB) => {
+                                return fileA.fileName.localeCompare(fileB.fileName)
+                            })
+                        }
+                        else if (sort === 'path') {
+                            children = files.sort((fileA, fileB) => {
+                                return fileA.relativePath.localeCompare(fileB.relativePath)
+                            })
+                        }
+                        else if (sort === 'tree') {
+                            files = files.sort((fileA, fileB) => {
+                                return fileA.relativePath.localeCompare(fileB.relativePath)
+                            })
+                            children = this.nodeContainer.makeDirectoryNode(node, files).children
+                        }
 
-                return this.prepareChildren(node, children)
-            })
+                        return this.prepareChildren(node, children)
+                    })
         }
 
         if (node instanceof DirectoryNode) {
             return node.children
         }
 
-        return []
+        console.error('TreeDataProvider.getChildren(): Unknown node type. See the console for details.')
+        console.error(node)
+        throw new Error('TreeDataProvider.getChildren(): Unknown node type. See the console for details.')
     }
 
     /**

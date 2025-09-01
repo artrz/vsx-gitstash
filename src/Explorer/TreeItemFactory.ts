@@ -52,11 +52,13 @@ export default class {
             return this.getMessageItem(node)
         }
 
-        throw new Error(`getTreeItem() Invalid node ${node.id}`)
+        console.error('TreeItemFactory.getTreeItem(): Invalid tree node. See the console for details.')
+        console.error(node)
+        throw new Error('TreeItemFactory.getTreeItem(): Invalid tree node. See the console for details.')
     }
 
     /**
-     * Generates an repository tree item.
+     * Generates a repository tree item.
      *
      * @param node the node to be used as base
      */
@@ -73,7 +75,7 @@ export default class {
     }
 
     /**
-     * Generates an stash tree item.
+     * Generates a stash tree item.
      *
      * @param node the node to be used as base
      */
@@ -90,7 +92,7 @@ export default class {
     }
 
     /**
-     * Generates a stashed file tree item.
+     * Generates a file tree item.
      *
      * @param node the node to be used as base
      */
