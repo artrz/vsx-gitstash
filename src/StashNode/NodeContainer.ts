@@ -58,8 +58,12 @@ export default class NodeContainer {
      * Gets the stashes list.
      */
     public async getStashes(repositoryNode: RepositoryNode): Promise<StashNode[]> {
-        return (await this.stashGit.getStashes(repositoryNode.path))
+        const stashes = (await this.stashGit.getStashes(repositoryNode.path))
             .map((stash: Stash) => this.nodeFactory.createStashNode(stash, repositoryNode))
+
+        repositoryNode.setChildren(stashes)
+
+        return stashes
     }
 
     /**
@@ -68,7 +72,7 @@ export default class NodeContainer {
      * @param stashNode the parent stash
      */
     public async getFiles(stashNode: StashNode): Promise<FileNode[]> {
-        return this.stashGit.getStashedFiles(
+        const files = await this.stashGit.getStashedFiles(
             stashNode.path,
             stashNode.index,
             stashNode.parentHashes.length > 2,
@@ -107,6 +111,10 @@ export default class NodeContainer {
 
             return fileNodes
         })
+
+        stashNode.setChildren(files)
+
+        return files
     }
 
     /**

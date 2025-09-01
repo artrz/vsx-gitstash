@@ -97,7 +97,6 @@ export default class implements TreeDataProvider<Node> {
 
         if (node instanceof RepositoryNode) {
             return this.nodeContainer.getStashes(node).then((stashes) => {
-                node.setChildren(stashes)
                 return this.prepareChildren(node, stashes)
             })
         }
@@ -117,7 +116,6 @@ export default class implements TreeDataProvider<Node> {
                     })
                 }
 
-                node.setChildren(files)
                 return this.prepareChildren(node, files)
             })
         }
