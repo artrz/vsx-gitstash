@@ -72,6 +72,7 @@ The GitHub release is  [automatically generated](https://github.com/artrz/vsx-gi
 
 ![Context menu - file](resources/docs/context-menu-file.png)
 
+![Context menu - repository](resources/docs/stash-listing.png)
 
 ## Diff view modes
 
@@ -113,7 +114,8 @@ Alternative way to diff the stashed file without its changes.
 | `gitstash.explorer.enabled`                               | Shows or hides the explorer on startup |
 | `gitstash.explorer.buttons`                               | Shows or hides the explorer tree buttons |
 | `gitstash.explorer.eagerLoadStashes`                      | If enabled, stashes will be preloaded instead of lazy loaded. This is required to see the stashes count but may degrade performance if theres too much data |
-| `gitstash.explorer.itemDisplayMode`                       | Configures if empty repositories should be listed, hidden or indicate its emptiness. **This setting only applies if stashes are configured to be preloaded** |
+| `gitstash.explorer.display.emptyRepositories`             | Configures if empty repositories should be listed, hidden or indicate its emptiness. **This setting only applies if stashes are configured to be preloaded** |
+| `gitstash.explorer.display.fileSorting`                   | Defines how stash files will be sorted. |
 | `gitstash.explorer.items.repository.labelContent`         | Specifies the format for each repository label. Available tokens: `${name}` - the repository name. `${directory}` - the repository directory base name. `${path}` - the repository directory path. `${stashesCount}` - the number of stashes on the repository |
 | `gitstash.explorer.items.repository.descriptionContent`   | Specifies the format for each repository description. Available tokens: Same than repository.labelContent |
 | `gitstash.explorer.items.repository.tooltipContent`       | Specifies the format for each repository tooltip. Available tokens: Same than repository.labelContent |
@@ -130,7 +132,6 @@ Alternative way to diff the stashed file without its changes.
 | `gitstash.explorer.items.file.descriptionContent`         | Specifies the format for each file description . Available tokens: Same than file.labelContent |
 | `gitstash.explorer.items.file.tooltipContent`             | Specifies the format for each file tooltip . Available tokens: Same than file.labelContent |
 | `gitstash.explorer.items.file.to-clipboardContent`        | Specifies file data to be set on clipboard. Available tokens: Same than file.labelContent. `${oldName}` - the previous name |
-| `gitstash.explorer.items.file.sorting`                    | Defines how stash files will be sorted. |
 | `gitstash.explorer.items.renamedFile.labelContent`        | Specifies the format for each renamed file label. Available tokens: `${filename}` - the file name. `${oldFilename}` - the previous file name. `${filepath}` - the file path. `${type}` - the change type |
 | `gitstash.explorer.items.renamedFile.descriptionContent`  | Specifies the format for each renamed file description . Available tokens: Same than renamedFile.labelContent |
 | `gitstash.explorer.items.renamedFile.tooltipContent`      | Specifies the format for each renamed file tooltip . Available tokens: Same than renamedFile.labelContent |

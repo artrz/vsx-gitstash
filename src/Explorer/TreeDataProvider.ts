@@ -76,6 +76,13 @@ export default class implements TreeDataProvider<Node> {
     /**
      * Reloads the explorer tree.
      */
+    public setSorting = (config: string): void => {
+        this.config.set(this.config.key.expDisplayFileSorting, config)
+    }
+
+    /**
+     * Reloads the explorer tree.
+     */
     public refresh = (): void => {
         this.reload('force')
     }
@@ -105,7 +112,7 @@ export default class implements TreeDataProvider<Node> {
 
         if (node instanceof StashNode) {
             return this.nodeContainer.getFiles(node).then((files) => {
-                const sort = this.config.get<string>('explorer.items.file.sorting')
+                const sort = this.config.get<string>(this.config.key.expDisplayFileSorting)
                 let children: (DirectoryNode | FileNode)[] = []
 
                 if (sort === 'name') {
@@ -143,10 +150,10 @@ export default class implements TreeDataProvider<Node> {
      * @param children the parent's children
      */
     private prepareChildren(parent: Node | undefined, children: Node[]): Node[] {
-        const itemDisplayMode = this.config.get('explorer.itemDisplayMode')
+        const emptyRepoMode = this.config.get(this.config.key.expDisplayEmptyRepos)
 
         if (!parent) {
-            if (itemDisplayMode === 'hide-empty' && this.config.get('explorer.eagerLoadStashes')) {
+            if (emptyRepoMode === 'hide-empty' && this.config.get('explorer.eagerLoadStashes')) {
                 children = children.filter(
                     (repositoryNode) => (repositoryNode as RepositoryNode).childrenCount,
                 )
@@ -157,7 +164,7 @@ export default class implements TreeDataProvider<Node> {
             return children
         }
 
-        if (itemDisplayMode === 'indicate-empty') {
+        if (emptyRepoMode === 'indicate-empty') {
             if (!parent) {
                 return [this.nodeContainer.makeMessageNode('No repositories found.')]
             }

@@ -12,6 +12,9 @@ export default class Config extends BaseConfig {
         expEnabled: 'explorer.enabled',
         expButtons: 'explorer.buttons',
 
+        expDisplayEmptyRepos: 'explorer.display.emptyRepositories',
+        expDisplayFileSorting: 'explorer.display.fileSorting',
+
         expItemsRepoLabel: 'explorer.items.repository.labelContent',
         expItemsRepoDescription: 'explorer.items.repository.descriptionContent',
         expItemsRepoTooltip: 'explorer.items.repository.tooltipContent',
@@ -30,7 +33,6 @@ export default class Config extends BaseConfig {
         expItemsFileDescription: 'explorer.items.file.descriptionContent',
         expItemsFileTooltip: 'explorer.items.file.tooltipContent',
         expItemsFileToClipboard: 'explorer.items.file.to-clipboardContent',
-        expItemsFileSorting: 'explorer.items.file.sorting',
 
         expItemsRenamedFileLabel: 'explorer.items.renamedFile.labelContent',
         expItemsRenamedFileDescription: 'explorer.items.renamedFile.descriptionContent',
@@ -38,7 +40,6 @@ export default class Config extends BaseConfig {
         expItemsRenamedFileToClipboard: 'explorer.items.renamedFile.to-clipboardContent',
 
         explorerEagerLoadStashes: 'explorer.eagerLoadStashes',
-        explorerItemDisplayMode: 'explorer.itemDisplayMode',
         editorDiffTitleFormat: 'editor.diffTitleFormat',
 
         logAutoclear: 'log.autoclear',
@@ -49,5 +50,9 @@ export default class Config extends BaseConfig {
     public get<T>(section: typeof this.key[keyof typeof this.key]): T {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return this.settings.get(section)!
+    }
+
+    public set(section: typeof this.key[keyof typeof this.key], value: unknown): Thenable<void> {
+        return this.settings.update(section, value)
     }
 }

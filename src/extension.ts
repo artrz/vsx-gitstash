@@ -53,6 +53,9 @@ export function activate(context: ExtensionContext): void {
         workspace.registerTextDocumentContentProvider(UriGenerator.fileScheme, new DocumentContentProvider()),
 
         commands.registerCommand('gitstash.explorer.toggle', treeProvider.toggle),
+        commands.registerCommand('gitstash.explorer.sortName', () => { treeProvider.setSorting('name') }),
+        commands.registerCommand('gitstash.explorer.sortPath', () => { treeProvider.setSorting('path') }),
+        commands.registerCommand('gitstash.explorer.sortTree', () => { treeProvider.setSorting('tree') }),
         commands.registerCommand('gitstash.explorer.refresh', treeProvider.refresh),
 
         commands.registerCommand('gitstash.stash', stashCommands.stash),

@@ -20,6 +20,8 @@ export default abstract class {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
     public abstract get<T>(section: typeof this.key[keyof typeof this.key]): T
 
+    public abstract set(section: typeof this.key[keyof typeof this.key], value: unknown): Thenable<void>
+
     public reload(): void {
         this.settings = workspace.getConfiguration(this._prefix)
     }
