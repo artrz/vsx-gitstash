@@ -9,6 +9,7 @@ import {
     TreeItemCollapsibleState,
 } from 'vscode'
 import Config from '../Config'
+import DirectoryNode from './TreeNode/DirectoryNode'
 import FileNode from '../StashNode/FileNode'
 import MessageNode from '../StashNode/MessageNode'
 import Node from '../StashNode/Node'
@@ -41,11 +42,14 @@ export default class {
         if (node instanceof StashNode) {
             return this.getStashItem(node)
         }
-        if (node instanceof MessageNode) {
-            return this.getMessageItem(node)
-        }
         if (node instanceof FileNode) {
             return this.getFileItem(node)
+        }
+        if (node instanceof DirectoryNode) {
+            return this.geDirectoryItem(node)
+        }
+        if (node instanceof MessageNode) {
+            return this.getMessageItem(node)
         }
 
         throw new Error(`getTreeItem() Invalid node ${node.id}`)
@@ -114,6 +118,18 @@ export default class {
                 command: 'gitstash.show',
                 arguments: [node],
             },
+        }
+    }
+
+    private geDirectoryItem(node: DirectoryNode): TreeItem {
+        return {
+            id: node.name.replaceAll('[^a-z0-9]', '-'),
+            label: node.name,
+            description: undefined,
+            tooltip: undefined,
+            iconPath: ThemeIcon.Folder,
+            contextValue: 'directory',
+            collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
     }
 

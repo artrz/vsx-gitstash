@@ -16,9 +16,9 @@ import WorkspaceGit from '../Git/WorkspaceGit'
  * A repository implementation using another name to avoid confusion with git repos.
  */
 export default class NodeContainer {
-    private stashGit: StashGit
-    private workspaceGit: WorkspaceGit
-    private nodeFactory: NodeFactory
+    protected stashGit: StashGit
+    protected workspaceGit: WorkspaceGit
+    protected nodeFactory: NodeFactory
 
     constructor(workspaceGit: WorkspaceGit) {
         this.workspaceGit = workspaceGit
