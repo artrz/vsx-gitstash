@@ -50,7 +50,7 @@ export default class NodeContainer extends BaseNodeContainer {
     /**
      * Creates a message node.
      */
-    public getMessageNode(message: string, parent?: Node): MessageNode {
+    public makeMessageNode(message: string, parent?: Node): MessageNode {
         return new MessageNode(message, parent)
     }
 }

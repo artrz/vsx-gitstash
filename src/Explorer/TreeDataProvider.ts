@@ -159,10 +159,10 @@ export default class implements TreeDataProvider<Node> {
 
         if (itemDisplayMode === 'indicate-empty') {
             if (!parent) {
-                return [this.nodeContainer.getMessageNode('No repositories found.')]
+                return [this.nodeContainer.makeMessageNode('No repositories found.')]
             }
             if (parent instanceof RepositoryNode) {
-                return [this.nodeContainer.getMessageNode('No stashes found.')]
+                return [this.nodeContainer.makeMessageNode('No stashes found.')]
             }
         }
 
