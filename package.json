@@ -192,16 +192,16 @@
                 "gitstash.explorer.items.file.sorting": {
                     "type": "string",
                     "enum": [
-                        "path",
                         "name",
+                        "path",
                         "tree"
                     ],
                     "enumDescriptions": [
-                        "Sort by path",
                         "Sort by name",
+                        "Sort by path",
                         "Tree structure"
                     ],
-                    "default": "tree",
+                    "default": "path",
                     "description": "Configures the way stash files are listed"
                 },
                 "gitstash.explorer.items.renamedFile.labelContent": {

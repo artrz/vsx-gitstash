@@ -23,6 +23,7 @@ Every executed command is logged along its output for peace of mind.
   - Diff stashed file changes + [alternative diff modes](#diff-view-modes)
   - Apply changes from selected files only
   - Copy stash information like hash, description, etc to clipboard from the context menu
+  - Configurable explorer displaying (sorted list or tree)
   - Configurable labels, descriptions, icons, tooltips, decorations, clipboard data
   - Configurable data loading strategy for files (performance related)
   - Open project directory
