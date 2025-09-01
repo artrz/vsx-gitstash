@@ -7,7 +7,6 @@ import { RenameStash, Stash } from '../Git/StashGit'
 import { Uri, workspace } from 'vscode'
 import FileNode from './FileNode'
 import FileNodeType from './FileNodeType'
-import MessageNode from './MessageNode'
 import RepositoryNode from './RepositoryNode'
 import StashNode from './StashNode'
 import { basename, dirname } from 'path'
@@ -124,19 +123,6 @@ export default class NodeFactory {
             parentNode,
             dirname(fileSubpath),
             basename(fileSubpath),
-        )
-    }
-
-    /**
-     * Generates a message node.
-     *
-     * @param message    the message to display
-     * @param parentNode the parent node
-     */
-    public createMessageNode(message: string, parentNode?: StashNode): MessageNode {
-        return new MessageNode(
-            message,
-            parentNode,
         )
     }
 }

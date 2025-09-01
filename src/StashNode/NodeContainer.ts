@@ -6,7 +6,6 @@
 import StashGit, { FileStage, RenameStash, Stash, StashedFiles } from '../Git/StashGit'
 import { createHash } from 'node:crypto'
 import FileNode from './FileNode'
-import MessageNode from './MessageNode'
 import NodeFactory from './NodeFactory'
 import RepositoryNode from './RepositoryNode'
 import StashNode from './StashNode'
@@ -165,12 +164,5 @@ export default class NodeContainer {
         }
 
         throw new Error(`Unsupported fileNode type: ${fileNode.type}`)
-    }
-
-    /**
-     * Creates a message node.
-     */
-    public getMessageNode(message: string): MessageNode {
-        return this.nodeFactory.createMessageNode(message)
     }
 }

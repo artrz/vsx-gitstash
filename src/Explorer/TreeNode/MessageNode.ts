@@ -3,16 +3,15 @@
  * GPL-3.0-only. See LICENSE.md in the project root for license details.
  */
 
-import BaseMessageNode from '../../StashNode/MessageNode'
 import Node from '../../StashNode/Node'
-// import TreeNode from './TreeNode'
+import TreeNode from './TreeNode'
 
-export default class MessageNode extends BaseMessageNode {
+export default class MessageNode extends TreeNode {
     constructor(
         protected _message: string,
         protected _parent?: Node,
     ) {
-        super(_message, _parent)
+        super()
     }
 
     public get message(): string {

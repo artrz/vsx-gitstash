@@ -13,8 +13,10 @@ import {
     window,
 } from 'vscode'
 import Config from '../Config'
+import DirectoryNode from './TreeNode/DirectoryNode'
+import FileNode from '../StashNode/FileNode'
 import Node from '../StashNode/Node'
-import NodeContainer from '../StashNode/NodeContainer'
+import NodeContainer from '../Explorer/TreeNode/NodeContainer'
 import RepositoryNode from '../StashNode/RepositoryNode'
 import StashLabels from '../StashLabels'
 import StashNode from '../StashNode/StashNode'
@@ -104,20 +106,25 @@ export default class implements TreeDataProvider<Node> {
         if (node instanceof StashNode) {
             return this.nodeContainer.getFiles(node).then((files) => {
                 const sort = this.config.get<string>('explorer.items.file.sorting')
+                let children: (DirectoryNode | FileNode)[] = []
 
-                if (sort === 'path') {
-                    files = files.sort((fileA, fileB) => {
-                        return fileA.relativePath.localeCompare(fileB.relativePath)
-                    })
-                }
-                else if (sort === 'name') {
-                    files = files.sort((fileA, fileB) => {
+                if (sort === 'name') {
+                    children = files.sort((fileA, fileB) => {
                         return fileA.fileName.localeCompare(fileB.fileName)
                     })
                 }
+                else if (sort === 'path') {
+                    children = files.sort((fileA, fileB) => {
+                        return fileA.relativePath.localeCompare(fileB.relativePath)
+                    })
+                }
 
-                return this.prepareChildren(node, files)
+                return this.prepareChildren(node, children)
             })
+        }
+
+        if (node instanceof DirectoryNode) {
+            return node.children
         }
 
         return []

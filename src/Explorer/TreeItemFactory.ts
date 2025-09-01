@@ -11,7 +11,7 @@ import {
 import Config from '../Config'
 import DirectoryNode from './TreeNode/DirectoryNode'
 import FileNode from '../StashNode/FileNode'
-import MessageNode from '../StashNode/MessageNode'
+import MessageNode from './TreeNode/MessageNode'
 import Node from '../StashNode/Node'
 import RepositoryNode from '../StashNode/RepositoryNode'
 import StashLabels from '../StashLabels'

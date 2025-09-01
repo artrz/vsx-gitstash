@@ -9,7 +9,7 @@ import FileNode from './StashNode/FileNode'
 import Node from './StashNode/Node'
 import RepositoryNode from './StashNode/RepositoryNode'
 import StashNode from './StashNode/StashNode'
-import MessageNode from './StashNode/MessageNode'
+import MessageNode from './Explorer/TreeNode/MessageNode'
 
 export default class {
     private config: Config
