@@ -58,6 +58,8 @@ The GitHub release is  [automatically generated](https://github.com/artrz/vsx-gi
 
 ![Tree actions](resources/docs/tree.png)
 
+![Explorer - changes sorting](resources/docs/changes-sorting.png)
+
 ![Success notification](resources/docs/success.png)
 
 ![Conflicts notification](resources/docs/conflicts.png)
@@ -71,8 +73,6 @@ The GitHub release is  [automatically generated](https://github.com/artrz/vsx-gi
 ![Context menu - stash](resources/docs/context-menu-stash.png)
 
 ![Context menu - file](resources/docs/context-menu-file.png)
-
-![Context menu - repository](resources/docs/stash-listing.png)
 
 ## Diff view modes
 
