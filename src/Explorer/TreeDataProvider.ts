@@ -118,6 +118,12 @@ export default class implements TreeDataProvider<Node> {
                         return fileA.relativePath.localeCompare(fileB.relativePath)
                     })
                 }
+                else if (sort === 'tree') {
+                    files = files.sort((fileA, fileB) => {
+                        return fileA.relativePath.localeCompare(fileB.relativePath)
+                    })
+                    children = this.nodeContainer.makeDirectoryNode(node, files).children
+                }
 
                 return this.prepareChildren(node, children)
             })
