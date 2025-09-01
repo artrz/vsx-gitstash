@@ -4,6 +4,7 @@
  */
 
 import StashGit, { FileStage, RenameStash, Stash, StashedFiles } from '../Git/StashGit'
+import { createHash } from 'node:crypto'
 import FileNode from './FileNode'
 import MessageNode from './MessageNode'
 import NodeFactory from './NodeFactory'
@@ -26,10 +27,14 @@ export default class NodeContainer {
     }
 
     /**
-     * Gets the raw git stashes list.
+     * Gets the stashes text-list md5 hash.
      */
-    public async getRawStashesList(cwd: string): Promise<null | string> {
-        return this.stashGit.getRawStash(cwd)
+    public async getStashesMd5(cwd: string): Promise<string | undefined> {
+        return this.stashGit.getRawStash(cwd).then((rawStash: string | null) => {
+            return rawStash
+                ? createHash('md5').update(rawStash).digest('hex')
+                : undefined
+        })
     }
 
     /**

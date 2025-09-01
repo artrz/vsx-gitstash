@@ -186,11 +186,11 @@ export default class implements TreeDataProvider<Node> {
             if (pathUri) {
                 const path = pathUri.fsPath
 
-                return void this.nodeContainer.getRawStashesList(path).then((rawStash: null | string) => {
+                return void this.nodeContainer.getStashesMd5(path).then((md5: string | undefined) => {
                     const cachedRawStash = this.rawStashes[path]
 
-                    if (!cachedRawStash || cachedRawStash !== rawStash) {
-                        this.rawStashes[path] = rawStash ?? undefined
+                    if (!cachedRawStash || cachedRawStash !== md5) {
+                        this.rawStashes[path] = md5
                         this.onDidChangeTreeDataEmitter.fire()
                     }
                 })
