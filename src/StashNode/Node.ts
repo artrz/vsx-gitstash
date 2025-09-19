@@ -6,7 +6,7 @@
 export default abstract class Node {
     protected _id!: string
 
-    public get id(): string {
+    get id(): string {
         return this._id
     }
 

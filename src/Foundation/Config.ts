@@ -26,7 +26,7 @@ export default abstract class {
         this.settings = workspace.getConfiguration(this._prefix)
     }
 
-    public get prefix(): string {
+    get prefix(): string {
         return this._prefix
     }
 }

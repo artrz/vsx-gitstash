@@ -28,21 +28,21 @@ export default class StashNode extends Node {
     /**
      * The node index.
      */
-    public get index(): number {
+    get index(): number {
         return this._index
     }
 
     /**
      * The node index with the stash@{N} format.
      */
-    public get atIndex(): string {
+    get atIndex(): string {
         return `stash@{${this._index}}`
     }
 
     /**
      * The node parent index.
      */
-    public get parent(): RepositoryNode {
+    get parent(): RepositoryNode {
         return this._parent
     }
 
@@ -50,49 +50,49 @@ export default class StashNode extends Node {
      * The absolute path of the repository containing this stash.
      * `/path/to/repository`
      */
-    public get path(): string {
+    get path(): string {
         return this.parent.path
     }
 
     /**
      * The stash subject, commonly in the form of "On some_branch_name: This is the msg set"
      */
-    public get subject(): string {
+    get subject(): string {
         return this._subject
     }
 
     /**
      * The stash generation date.
      */
-    public get date(): Date {
+    get date(): Date {
         return this._date
     }
 
     /**
      * The stash hash.
      */
-    public get hash(): string {
+    get hash(): string {
         return this._hash
     }
 
     /**
      * The stash abbreviated hash.
      */
-    public get shortHash(): string {
+    get shortHash(): string {
         return this._shortHash
     }
 
     /**
      * The hashes of the parents.
      */
-    public get parentHashes(): string[] {
+    get parentHashes(): string[] {
         return this._parentHashes
     }
 
     /**
      * Basically what was defined as message.
      */
-    public get description(): string {
+    get description(): string {
         return this._description
     }
 
@@ -102,28 +102,28 @@ export default class StashNode extends Node {
      * description). If a stash is manually created with `stash store - m msg` this
      * most probably will be undefined (unless manually prepending 'On branchname: msg').
      */
-    public get branch(): string | undefined {
+    get branch(): string | undefined {
         return this._branch
     }
 
     /**
      * The stash note.
      */
-    public get note(): string | undefined {
+    get note(): string | undefined {
         return this._note
     }
 
     /**
      * The loaded children.
      */
-    public get children(): FileNode[] | undefined {
+    get children(): FileNode[] | undefined {
         return this._children
     }
 
     /**
      * The children count if available.
      */
-    public get childrenCount(): number | undefined {
+    get childrenCount(): number | undefined {
         return this._children
             ? this._children.length
             : undefined

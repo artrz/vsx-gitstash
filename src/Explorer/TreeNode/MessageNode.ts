@@ -14,14 +14,14 @@ export default class MessageNode extends Node {
         this.makeId('m', _parent?.id ?? '', _message)
     }
 
-    public get message(): string {
+    get message(): string {
         return this._message
     }
 
     /**
      * Gets the parent stash node.
      */
-    public get parent(): Node | undefined {
+    get parent(): Node | undefined {
         return this._parent
     }
 }
