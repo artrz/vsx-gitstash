@@ -8,6 +8,7 @@ import { Commands } from './Commands'
 import Config from './Config'
 import DiffDisplayer from './DiffDisplayer'
 import DocumentContentProvider from './Document/DocumentContentProvider'
+import FileNode from './StashNode/FileNode'
 import FileSystemWatcherManager from './FileSystemWatcherManager'
 import NodeContainer from './Explorer/TreeNode/NodeContainer'
 import { StashCommands } from './StashCommands'
@@ -51,7 +52,7 @@ export function activate(context: ExtensionContext): void {
 
     context.subscriptions.push(
         new TreeDecorationProvider(config),
-        treeProvider.createTreeView(),
+        treeProvider.view,
 
         workspace.registerTextDocumentContentProvider(UriGenerator.fileScheme, new DocumentContentProvider()),
 
@@ -69,10 +70,10 @@ export function activate(context: ExtensionContext): void {
         commands.registerCommand('gitstash.openDir', stashCommands.openDir),
 
         commands.registerCommand('gitstash.show', stashCommands.show),
-        commands.registerCommand('gitstash.diffChangesCurrent', stashCommands.diffChangesCurrent),
-        commands.registerCommand('gitstash.diffCurrentChanges', stashCommands.diffCurrentChanges),
-        commands.registerCommand('gitstash.diffSourceCurrent', stashCommands.diffSourceCurrent),
-        commands.registerCommand('gitstash.diffCurrentSource', stashCommands.diffCurrentSource),
+        commands.registerCommand('gitstash.diffChangesCurrent', (node: FileNode) => { treeProvider.focus(node); stashCommands.diffChangesCurrent(node) }),
+        commands.registerCommand('gitstash.diffCurrentChanges', (node: FileNode) => { treeProvider.focus(node); stashCommands.diffCurrentChanges(node) }),
+        commands.registerCommand('gitstash.diffSourceCurrent', (node: FileNode) => { treeProvider.focus(node); stashCommands.diffSourceCurrent(node) }),
+        commands.registerCommand('gitstash.diffCurrentSource', (node: FileNode) => { treeProvider.focus(node); stashCommands.diffCurrentSource(node) }),
 
         commands.registerCommand('gitstash.pop', stashCommands.pop),
         commands.registerCommand('gitstash.apply', stashCommands.apply),

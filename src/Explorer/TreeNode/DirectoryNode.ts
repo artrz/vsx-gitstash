@@ -7,8 +7,9 @@ import * as path from 'path'
 import FileNode from './FileNode'
 import Node from '../../StashNode/Node'
 import StashNode from '../../StashNode/StashNode'
+import TreeNode from './TreeNode'
 
-export default class DirectoryNode extends Node {
+export default class DirectoryNode extends Node implements TreeNode {
     constructor(
         protected _branchParent: StashNode | DirectoryNode,
         protected _parent: StashNode,
@@ -22,7 +23,7 @@ export default class DirectoryNode extends Node {
         this.makeId('d', _basePath, _parent.shortHash, this.relativePath)
     }
 
-    public get branchParent(): StashNode | DirectoryNode {
+    get branchParent(): StashNode | DirectoryNode {
         return this._branchParent
     }
 
@@ -30,7 +31,7 @@ export default class DirectoryNode extends Node {
      * The full path corresponding to this node.
      * `/path/to/repo/base/path/dirName`
      */
-    public get path(): string {
+    get path(): string {
         return path.normalize(
             `${this.basePath}${path.sep}${this.relativePath}`,
         )
@@ -40,7 +41,7 @@ export default class DirectoryNode extends Node {
      * The absolute base path of the repository.
      * `/path/to/repository`/sub/path/dirName
      */
-    public get basePath(): string {
+    get basePath(): string {
         return this._basePath
     }
 
@@ -48,7 +49,7 @@ export default class DirectoryNode extends Node {
      * The relative directory path, i.e. the path without the repository basePath.
      * /path/to/repository/`sub/path/dirName`
      */
-    public get relativePath(): string {
+    get relativePath(): string {
         return path.normalize(`${this.subPath}${path.sep}${this.dirName}`)
     }
 
@@ -56,7 +57,7 @@ export default class DirectoryNode extends Node {
      * The relative base path, i.e. relative path without last directory. May be '.'.
      * /path/to/repository/`sub/path`/dirName
      */
-    public get subPath(): string {
+    get subPath(): string {
         return this._subPath
     }
 
@@ -64,11 +65,11 @@ export default class DirectoryNode extends Node {
      * The directory name.
      * /path/to/repo/base/path/`dirName`
      */
-    public get dirName(): string {
+    get dirName(): string {
         return this._dirName
     }
 
-    public get children(): (DirectoryNode | FileNode)[] {
+    get children(): (DirectoryNode | FileNode)[] {
         return [...this.directories, ...this.files]
     }
 }

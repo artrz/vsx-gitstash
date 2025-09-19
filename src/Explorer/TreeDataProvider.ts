@@ -5,6 +5,7 @@
 
 import {
     EventEmitter,
+    ProviderResult,
     TreeDataProvider,
     TreeItem,
     TreeView,
@@ -27,6 +28,7 @@ export default class implements TreeDataProvider<Node> {
     private readonly onDidChangeTreeDataEmitter = new EventEmitter<void>()
     readonly onDidChangeTreeData = this.onDidChangeTreeDataEmitter.event
 
+    public view: TreeView<Node>
     private config: Config
     private nodeContainer: NodeContainer
     private treeItemFactory: TreeItemFactory
@@ -43,6 +45,7 @@ export default class implements TreeDataProvider<Node> {
         this.config = config
         this.nodeContainer = nodeContainer
         this.treeItemFactory = new TreeItemFactory(config, uriGenerator, stashLabels)
+        this.view = this.createTreeView()
     }
 
     /**
@@ -191,6 +194,23 @@ export default class implements TreeDataProvider<Node> {
      */
     public getTreeItem(node: Node): TreeItem {
         return this.treeItemFactory.getTreeItem(node)
+    }
+
+    /**
+    * Returns the parent of `element`, `null` or `undefined` if `element` is a child of root.
+    * This method must be implemented in order to access {@link TreeView.reveal reveal} API.
+     * @see TreeDataProvider.getParent()
+     */
+    public getParent(element: Node & { branchParent?: Node, parent?: Node }): ProviderResult<Node> {
+        return element.branchParent ?? element.parent
+    }
+
+    /**
+     * Reveals the given element in the tree view.
+     * @see TreeView.reveal()
+     */
+    public focus(element: Node): void {
+        this.view.reveal(element, { select: true, focus: true })
     }
 
     /**
