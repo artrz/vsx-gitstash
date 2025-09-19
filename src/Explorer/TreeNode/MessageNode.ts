@@ -4,9 +4,8 @@
  */
 
 import Node from '../../StashNode/Node'
-import TreeNode from './TreeNode'
 
-export default class MessageNode extends TreeNode {
+export default class MessageNode extends Node {
     constructor(
         protected _message: string,
         protected _parent?: Node,

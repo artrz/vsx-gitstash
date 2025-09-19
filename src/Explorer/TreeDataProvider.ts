@@ -14,7 +14,7 @@ import {
 } from 'vscode'
 import Config from '../Config'
 import DirectoryNode from './TreeNode/DirectoryNode'
-import FileNode from '../StashNode/FileNode'
+import FileNode from './TreeNode/FileNode'
 import Node from '../StashNode/Node'
 import NodeContainer from '../Explorer/TreeNode/NodeContainer'
 import RepositoryNode from '../StashNode/RepositoryNode'
@@ -116,14 +116,20 @@ export default class implements TreeDataProvider<Node> {
                         let children: (DirectoryNode | FileNode)[] = []
 
                         if (sort === 'name') {
-                            children = files.sort((fileA, fileB) => {
-                                return fileA.fileName.localeCompare(fileB.fileName)
-                            })
+                            children = this.nodeContainer.makeChildFileNodes(
+                                node,
+                                files.sort((fileA, fileB) => {
+                                    return fileA.fileName.localeCompare(fileB.fileName)
+                                }),
+                            )
                         }
                         else if (sort === 'path') {
-                            children = files.sort((fileA, fileB) => {
-                                return fileA.relativePath.localeCompare(fileB.relativePath)
-                            })
+                            children = this.nodeContainer.makeChildFileNodes(
+                                node,
+                                files.sort((fileA, fileB) => {
+                                    return fileA.relativePath.localeCompare(fileB.relativePath)
+                                }),
+                            )
                         }
                         else if (sort === 'tree') {
                             files = files.sort((fileA, fileB) => {

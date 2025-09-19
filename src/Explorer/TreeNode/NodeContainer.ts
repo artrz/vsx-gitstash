@@ -3,9 +3,10 @@
  * GPL-3.0-only. See LICENSE.md in the project root for license details.
  */
 
+import BaseFileNode from '../../StashNode/FileNode'
 import BaseNodeContainer from '../../StashNode/NodeContainer'
 import DirectoryNode from './DirectoryNode'
-import FileNode from '../../StashNode/FileNode'
+import FileNode from './FileNode'
 import MessageNode from './MessageNode'
 import Node from '../../StashNode/Node'
 import NodeFactory from './NodeFactory'
@@ -24,10 +25,21 @@ export default class NodeContainer extends BaseNodeContainer {
     }
 
     /**
-    * Creates a directory node.
+    * Generates a directory tree structure and returns all the root branches.
     */
-    public makeDirectoryNodes(parent: StashNode, files: FileNode[]): (DirectoryNode | FileNode)[] {
+    public makeDirectoryNodes(
+        parent: StashNode,
+        files: BaseFileNode[],
+    ): (DirectoryNode | FileNode)[] {
         return this.nodeFactory.createDirectoryNodes(parent, files)
+    }
+
+    public makeChildFileNodes(
+        parent: StashNode,
+        files: BaseFileNode[],
+    ): FileNode[] {
+        return files.map((baseFileNode) => this.nodeFactory
+            .createFileNodeFromBase(parent, baseFileNode))
     }
 
     /**

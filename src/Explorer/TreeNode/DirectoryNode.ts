@@ -4,12 +4,13 @@
  */
 
 import * as path from 'path'
-import FileNode from '../../StashNode/FileNode'
-import TreeNode from './TreeNode'
+import FileNode from './FileNode'
+import Node from '../../StashNode/Node'
 import StashNode from '../../StashNode/StashNode'
 
-export default class DirectoryNode extends TreeNode {
+export default class DirectoryNode extends Node {
     constructor(
+        protected _branchParent: StashNode | DirectoryNode,
         protected _parent: StashNode,
         protected _basePath: string,
         protected _subPath: string,
@@ -19,6 +20,10 @@ export default class DirectoryNode extends TreeNode {
     ) {
         super()
         this.makeId('d', _basePath, _parent.shortHash, this.relativePath)
+    }
+
+    public get branchParent(): StashNode | DirectoryNode {
+        return this._branchParent
     }
 
     /**
