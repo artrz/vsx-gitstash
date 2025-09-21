@@ -345,6 +345,12 @@
                 "icon": "$(trash)"
             },
             {
+                "command": "gitstash.multiDrop",
+                "title": "Drop multiple...",
+                "category": "GitStash",
+                "icon": "$(trash)"
+            },
+            {
                 "command": "gitstash.branch",
                 "title": "Branch...",
                 "category": "GitStash"
@@ -492,6 +498,10 @@
                     "when": "hasGitRepository"
                 },
                 {
+                    "command": "gitstash.multiDrop",
+                    "when": "hasGitRepository"
+                },
+                {
                     "command": "gitstash.applySingle",
                     "when": "false"
                 },
@@ -592,6 +602,11 @@
                     "command": "gitstash.openDir",
                     "when": "view == gitstash.explorer && viewItem == repository",
                     "group": "menu@1"
+                },
+                {
+                    "command": "gitstash.multiDrop",
+                    "when": "view == gitstash.explorer && viewItem == repository",
+                    "group": "menu@2"
                 },
                 {
                     "command": "gitstash.apply",

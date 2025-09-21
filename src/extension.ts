@@ -79,6 +79,7 @@ export function activate(context: ExtensionContext): void {
         commands.registerCommand('gitstash.apply', stashCommands.apply),
         commands.registerCommand('gitstash.branch', stashCommands.branch),
         commands.registerCommand('gitstash.drop', stashCommands.drop),
+        commands.registerCommand('gitstash.multiDrop', stashCommands.multiDrop),
 
         commands.registerCommand('gitstash.applySingle', stashCommands.applySingle),
         commands.registerCommand('gitstash.createSingle', stashCommands.createSingle),

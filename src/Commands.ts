@@ -178,7 +178,21 @@ export class Commands {
         this.runOnStash(
             stashNode,
             (stashNode: StashNode) => { this.dropPerform(stashNode) },
-            'Stash drop',
+            'Drop stash',
+        )
+    }
+
+    /**
+     * Drops the currently selected stash or selects one and continue.
+     *
+     * @param stashNode the involved node
+     */
+    public multiDrop = (): void => {
+        this.runOnStash(
+            undefined,
+            (...nodes: StashNode[]) => { this.multiDropPerform(...nodes) },
+            'Drop multiple stashes',
+            true,
         )
     }
 
@@ -376,6 +390,35 @@ export class Commands {
         ).then((option) => {
             if (typeof option !== 'undefined') {
                 this.stashCommands.drop(stashNode)
+            }
+        })
+    }
+
+    private multiDropPerform = (...nodes: StashNode[]): void => {
+        if (!nodes.length) {
+            vscode.window.showInformationMessage('Nothing to drop')
+            return
+        }
+
+        const textList = nodes
+            .map((node) => this.stashLabels.getName(node))
+            .join('\n')
+
+        const msg = `Are you sure you want to drop the stashes?\n${textList}`
+
+        void vscode.window.showWarningMessage<vscode.MessageItem>(
+            msg,
+            { modal: true },
+            { title: 'Yes' },
+        ).then((option) => {
+            if (typeof option !== 'undefined') {
+                nodes
+                    // Higher index first.
+                    .sort((a, b) => a.index > b.index ? -1 : (a.index < b.index ? 1 : 0))
+                    .forEach((node) => {
+                        console.log(`Multi-dropping ${node.atIndex}`)
+                        this.stashCommands.drop(node)
+                    })
             }
         })
     }
