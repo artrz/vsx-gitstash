@@ -59,7 +59,7 @@ export class StashCommands {
 
         switch (type) {
             case StashType.Staged:
-                params.push('--staged')
+                params.push('--staged') // requires git v2.35
                 break
             case StashType.KeepIndex:
                 params.push('--keep-index')
