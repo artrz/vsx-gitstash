@@ -6,6 +6,11 @@
 import ExecError from './ExecError'
 import { spawn } from 'child_process'
 
+export class Execution {
+    promise!: Promise<string>
+    args!: string[]
+}
+
 export default class {
     /**
      * Executes a command.
@@ -57,5 +62,22 @@ export default class {
                 }
             })
         })
+    }
+
+    /**
+     * Generates an execution object containing the execution promise and the arguments
+     * used.
+     */
+    protected callObj(
+        command: string,
+        args: string[],
+        cwd?: string,
+        env?: Record<string, unknown>,
+        encoding?: BufferEncoding,
+    ): Execution {
+        return {
+            promise: this.call(command, args, cwd, env, encoding),
+            args,
+        }
     }
 }

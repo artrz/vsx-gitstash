@@ -142,14 +142,15 @@ export default class StashGit extends Git {
                     }
                 })
             }
+
+            if (includeUntracked) {
+                files.untracked = await this.getStashUntracked(cwd, index)
+                console.log(files.untracked)
+            }
         }
         catch (e) {
             console.log('StashGit.getStashedFiles')
             console.log(e)
-        }
-
-        if (includeUntracked) {
-            files.untracked = await this.getStashUntracked(cwd, index)
         }
 
         return files
@@ -165,28 +166,15 @@ export default class StashGit extends Git {
         const params = [
             'ls-tree',
             '-r',
+            '-z',
             '--name-only',
             `stash@{${index}}^3`,
         ]
 
-        const list: string[] = []
-
-        try {
-            const stashData = (await this.exec(params, cwd)).trim()
-
-            if (stashData.length > 0) {
-                const stashedFiles = stashData.split(/\r?\n/g)
-                stashedFiles.forEach((file: string) => {
-                    list.push(file)
-                })
-            }
-        }
-        catch (e) {
-            console.error(e)
-            console.debug(params.join(' '))
-        }
-
-        return list
+        return (await this.exec(params, cwd))
+            .trim()
+            .split('\0')
+            .filter((entry) => entry.length)
     }
 
     /**
@@ -246,6 +234,8 @@ export default class StashGit extends Git {
 
         return this.exec(params, cwd)
     }
+
+    // -------------------------------------------------------------------------
 
     /**
      * Creates a new stash.

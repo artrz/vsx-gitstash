@@ -213,13 +213,15 @@ export class StashCommands {
         node: RepositoryNode | StashNode | FileNode,
         exec: Execution,
         msg: string,
-    ) {
+    ): Promise<boolean> {
         try {
             const output = await exec.promise
             this.inform(node, exec.args, output, msg)
+            return true
         }
         catch (error) {
             this.informError(node, exec.args, error)
+            return false
         }
     }
 
