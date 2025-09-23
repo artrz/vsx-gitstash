@@ -404,12 +404,12 @@
             },
             {
                 "command": "gitstash.quickSwitch",
-                "title": "Quick Switch",
+                "title": "Quick Switch...",
                 "category": "GitStash"
             },
             {
                 "command": "gitstash.quickBack",
-                "title": "Quick Back",
+                "title": "Quick Back...",
                 "category": "GitStash"
             },
             {

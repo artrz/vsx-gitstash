@@ -44,10 +44,20 @@ You don't need to use the explorer buttons, just type `gitstash` in the command 
   - gitstash: Drop...
   - gitstash: Drop Multiple...
   - gitstash: Pop...
+  - gitstash: Quick switch...
+  - gitstash: Quick back...
   - gitstash: Refresh explorer
   - gitstash: Toggle explorer
 
 In a multi-root project, the git repository its automatically inferred from the current open document if there's one.
+
+
+### Quick Actions
+
+Quick actions automate some tasks by running two or more git commands, sometimes interactively.
+
+ - Quick switch: Save the current branch (session lifetime), stash current changes and checkout the selected branch
+ - Quick back: Checkout the previous branch and pop the latest stash
 
 
 ### Installation
