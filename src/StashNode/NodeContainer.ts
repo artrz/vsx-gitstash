@@ -3,7 +3,7 @@
  * GPL-3.0-only. See LICENSE.md in the project root for license details.
  */
 
-import StashGit, { FileStage, RenameStash, Stash, StashedFiles } from '../Git/StashGit'
+import StashGit, { FileStage, RenameStash, Stash } from '../Git/StashGit'
 import { createHash } from 'node:crypto'
 import FileNode from './FileNode'
 import NodeFactory from './NodeFactory'
@@ -15,25 +15,21 @@ import WorkspaceGit from '../Git/WorkspaceGit'
  * A repository implementation using another name to avoid confusion with git repos.
  */
 export default class NodeContainer {
-    protected stashGit: StashGit
-    protected workspaceGit: WorkspaceGit
-    protected nodeFactory: NodeFactory
-
-    constructor(workspaceGit: WorkspaceGit) {
-        this.workspaceGit = workspaceGit
-        this.stashGit = new StashGit()
-        this.nodeFactory = new NodeFactory()
+    constructor(
+        protected workspaceGit: WorkspaceGit,
+        protected stashGit = new StashGit(),
+        protected nodeFactory = new NodeFactory(),
+    ) {
     }
 
     /**
      * Gets a hash string representing the current available stashes.
      */
     public async getStateHash(cwd: string): Promise<string | undefined> {
-        return this.stashGit.getRawStashes(cwd).then((rawStash: string | null) => {
-            return rawStash
-                ? createHash('md5').update(rawStash).digest('hex')
-                : undefined
-        })
+        const rawStash = await this.stashGit.getRawStashes(cwd)
+        return rawStash
+            ? createHash('md5').update(rawStash).digest('hex')
+            : undefined
     }
 
     /**
@@ -42,20 +38,19 @@ export default class NodeContainer {
      * @param eagerLoadStashes indicates if children should be preloaded
      */
     public async getRepositories(eagerLoadStashes: boolean): Promise<RepositoryNode[]> {
-        return this.workspaceGit.getRepositories().then(async (paths: string[]) => {
-            const repositoryNodes: RepositoryNode[] = []
+        const paths = await this.workspaceGit.getRepositories(false)
 
-            for (const repositoryPath of paths) {
-                const repositoryNode = this.nodeFactory.createRepositoryNode(repositoryPath)
-                repositoryNodes.push(repositoryNode)
+        const repositoryNodes: RepositoryNode[] = []
+        for (const repositoryPath of paths) {
+            const repositoryNode = this.nodeFactory.createRepositoryNode(repositoryPath)
+            repositoryNodes.push(repositoryNode)
 
-                if (eagerLoadStashes) {
-                    repositoryNode.setChildren(await this.getStashes(repositoryNode))
-                }
+            if (eagerLoadStashes) {
+                repositoryNode.setChildren(await this.getStashes(repositoryNode))
             }
+        }
 
-            return repositoryNodes
-        })
+        return repositoryNodes
     }
 
     /**
@@ -76,49 +71,47 @@ export default class NodeContainer {
      * @param stashNode the parent stash
      */
     public async getFiles(stashNode: StashNode): Promise<FileNode[]> {
-        const files = await this.stashGit.getStashedFiles(
+        const stashedFiles = await this.stashGit.getStashedFiles(
             stashNode.path,
             stashNode.index,
             stashNode.parentHashes.length > 2,
-        ).then((stashedFiles: StashedFiles) => {
-            const fileNodes: FileNode[] = []
+        )
 
-            stashedFiles.added.forEach((fileSubpath: string) => {
-                fileNodes.push(
-                    this.nodeFactory.createAddedFileNode(stashNode, fileSubpath),
-                )
-            })
+        const fileNodes: FileNode[] = []
 
-            stashedFiles.modified.forEach((fileSubpath: string) => {
-                fileNodes.push(
-                    this.nodeFactory.createModifiedFileNode(stashNode, fileSubpath),
-                )
-            })
-
-            stashedFiles.renamed.forEach((fileSubpath: RenameStash) => {
-                fileNodes.push(
-                    this.nodeFactory.createRenamedFileNode(stashNode, fileSubpath),
-                )
-            })
-
-            stashedFiles.untracked.forEach((fileSubpath: string) => {
-                fileNodes.push(
-                    this.nodeFactory.createUntrackedFileNode(stashNode, fileSubpath),
-                )
-            })
-
-            stashedFiles.deleted.forEach((fileSubpath: string) => {
-                fileNodes.push(
-                    this.nodeFactory.createDeletedFileNode(stashNode, fileSubpath),
-                )
-            })
-
-            return fileNodes
+        stashedFiles.added.forEach((fileSubpath: string) => {
+            fileNodes.push(
+                this.nodeFactory.createAddedFileNode(stashNode, fileSubpath),
+            )
         })
 
-        stashNode.setChildren(files)
+        stashedFiles.modified.forEach((fileSubpath: string) => {
+            fileNodes.push(
+                this.nodeFactory.createModifiedFileNode(stashNode, fileSubpath),
+            )
+        })
 
-        return files
+        stashedFiles.renamed.forEach((fileSubpath: RenameStash) => {
+            fileNodes.push(
+                this.nodeFactory.createRenamedFileNode(stashNode, fileSubpath),
+            )
+        })
+
+        stashedFiles.untracked.forEach((fileSubpath: string) => {
+            fileNodes.push(
+                this.nodeFactory.createUntrackedFileNode(stashNode, fileSubpath),
+            )
+        })
+
+        stashedFiles.deleted.forEach((fileSubpath: string) => {
+            fileNodes.push(
+                this.nodeFactory.createDeletedFileNode(stashNode, fileSubpath),
+            )
+        })
+
+        stashNode.setChildren(fileNodes)
+
+        return fileNodes
     }
 
     /**
