@@ -12,15 +12,15 @@ import { WorkspaceFolder, workspace } from 'vscode'
  *
  * @param searchLevels the number of sub- or upper- levels to search for directories.
  */
-export function getRootPaths(searchLevels: number): string[] {
+export function getRootPaths(searchLevels: number, ignored: string[]): string[] {
     const workspacePaths = getWorkspacePaths()
 
     if (searchLevels < 0) {
-        return getUpperRootPaths(workspacePaths, searchLevels)
+        return getUpperRootPaths(workspacePaths, searchLevels, ignored)
     }
 
     if (searchLevels > 0) {
-        return getSubRootPaths(workspacePaths, searchLevels)
+        return getSubRootPaths(workspacePaths, searchLevels, ignored)
     }
 
     return workspacePaths
@@ -40,8 +40,13 @@ function getWorkspacePaths(): string[] {
  *
  * @param workspacePaths the base workspace paths.
  * @param searchLevels   the number of upper-levels to search for parent directories.
+ * @param ignored        the directories to ignore.
  */
-function getUpperRootPaths(workspacePaths: string[], searchLevels: number): string[] {
+function getUpperRootPaths(
+    workspacePaths: string[],
+    searchLevels: number,
+    ignored: string[] = [],
+): string[] {
     const roots: string[] = []
     workspacePaths.forEach((workspacePath) => {
         const dirsList = [workspacePath]
@@ -57,7 +62,9 @@ function getUpperRootPaths(workspacePaths: string[], searchLevels: number): stri
             workspacePath = parentPath
         }
         dirsList.forEach((workspacePath) => {
-            if (!roots.includes(workspacePath)) {
+            if (!roots.includes(workspacePath) && !ignored.find(
+                (ignoredName) => ignoredName === path.basename(workspacePath),
+            )) {
                 roots.push(workspacePath)
             }
         })
@@ -72,13 +79,18 @@ function getUpperRootPaths(workspacePaths: string[], searchLevels: number): stri
  * @param workspacePaths the base workspace paths.
  * @param searchLevels   the number of sub-levels to search for subdirectories.
  */
-function getSubRootPaths(workspacePaths: string[], searchLevels: number): string[] {
+function getSubRootPaths(
+    workspacePaths: string[],
+    searchLevels: number,
+    ignored: string[],
+): string[] {
     const roots: string[] = []
 
     workspacePaths.forEach((workspacePath) => {
         const subDirectories = getSubdirectoriesTree(
             workspacePath,
             searchLevels,
+            ignored,
             [workspacePath],
         )
         roots.push(...subDirectories)
@@ -94,13 +106,18 @@ function getSubRootPaths(workspacePaths: string[], searchLevels: number): string
  * @param levels   the number of levels to use for searching subdirectories
  * @param list     the directories list accumulator
  */
-function getSubdirectoriesTree(rootPath: string, levels: number, list?: string[]): string[] {
+function getSubdirectoriesTree(
+    rootPath: string,
+    levels: number,
+    ignored: string[],
+    list?: string[],
+): string[] {
     list ??= [] as string[]
     levels -= 1
 
     if (levels >= 0) {
         fs.readdirSync(rootPath).forEach((subPath) => {
-            if (subPath !== '.git') {
+            if (!ignored.find((ignoredName) => ignoredName === subPath)) {
                 const subDirectoryPath = path.join(rootPath, subPath)
 
                 if (fs.statSync(subDirectoryPath).isDirectory()) {

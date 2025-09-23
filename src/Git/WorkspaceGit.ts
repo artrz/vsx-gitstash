@@ -31,7 +31,8 @@ export default class WorkspaceGit extends Git {
      * @param firstOnly indicates if return only the first repository
      */
     public async getRepositories(firstOnly?: boolean): Promise<string[]> {
-        const depth: number = this.config.get('advanced.repositorySearchDepth')
+        const depth: number = this.config.get(this.config.key.advancedRepoSearchDepth)
+        const ignored: string[] = this.config.get(this.config.key.advancedIgnoredDirectories)
 
         const params = [
             'rev-parse',
@@ -39,7 +40,7 @@ export default class WorkspaceGit extends Git {
         ]
 
         const paths: string[] = []
-        for (const cwd of Workspace.getRootPaths(depth)) {
+        for (const cwd of Workspace.getRootPaths(depth, ignored)) {
             try {
                 let gitPath = (await this.exec(params, cwd)).trim()
                 if (gitPath.length < 1) {
