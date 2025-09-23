@@ -5,6 +5,7 @@
 
 import * as fs from 'fs'
 import * as vscode from 'vscode'
+import BranchGit from './Git/BranchGit'
 import DiffDisplayer, { DiffSide } from './DiffDisplayer'
 import FileNode from './StashNode/FileNode'
 import { FileStage } from './Git/StashGit'
@@ -23,11 +24,15 @@ interface QuickPickStashNodeItem extends vscode.QuickPickItem {
 }
 
 export class Commands {
+    // A temporal container when switching branches
+    private previousBranch?: string = undefined
+
     constructor(
         private nodeContainer: NodeContainer,
         private stashCommands: StashCommands,
         private displayer: DiffDisplayer,
         private stashLabels: StashLabels,
+        private branchGit: BranchGit = new BranchGit(),
     ) {
     }
 
@@ -165,7 +170,7 @@ export class Commands {
             })
 
             if (typeof stashMessage === 'string') {
-                this.stashCommands.stash(repositoryNode, selection.type, stashMessage)
+                void this.stashCommands.stash(repositoryNode, selection.type, stashMessage)
             }
         }
     }
@@ -384,6 +389,44 @@ export class Commands {
             })
     }
 
+    // -----------------------------------------------------------------------------------
+
+    public quickSwitch = async (repositoryNode?: RepositoryNode) => {
+        repositoryNode ??= await this.pickRepository('Quick switch')
+        if (!repositoryNode) { return }
+        const branch = await this.pickBranch(repositoryNode, 'Quick switch', true)
+        if (!branch) { return }
+
+        await this.stashCommands.stash(
+            repositoryNode,
+            StashCommands.StashType.IncludeUntracked,
+            `🤖 State before switching to '${branch}'`,
+        )
+
+        try {
+            this.previousBranch = await this.branchGit
+                .currentBranch(repositoryNode.path).promise
+        }
+        catch { /* empty */ }
+
+        await this.stashCommands.checkout(repositoryNode, branch)
+    }
+
+    public quickBack = async (repositoryNode?: RepositoryNode) => {
+        repositoryNode ??= await this.pickRepository('Quick back')
+        if (!repositoryNode) { return }
+        const branch = this.previousBranch
+            ?? await this.pickBranch(repositoryNode, 'Quick back', true)
+        if (!branch) { return }
+
+        await this.stashCommands.checkout(repositoryNode, branch)
+        this.previousBranch = undefined
+
+        this.stashCommands.pop(repositoryNode, true)
+    }
+
+    // -----------------------------------------------------------------------------------
+
     /**
      * Copy the stash node text from a template to clipboard.
      *
@@ -420,8 +463,13 @@ export class Commands {
         void vscode.env.clipboard.writeText(node.shortHash)
     }
 
+    // -----------------------------------------------------------------------------------
+
     /**
-     * Picks a Repository.
+     * Picks a Repository using the following order:
+     * 1. If there's only one, return it.
+     * 2. If there's a file open, return the repository that owns it.
+     * 3. Show a picker so user selects one.
      */
     private pickRepository = async (
         pickerPlaceholder: string,
@@ -511,5 +559,47 @@ export class Commands {
         return Array.isArray(selection)
             ? selection.map((item: QuickPickStashNodeItem) => item.node)
             : [selection.node]
+    }
+
+    /**
+     * Picks a branch.
+     */
+    private pickBranch = async (
+        repositoryNode: RepositoryNode | undefined,
+        pickerTitle: string,
+        filterCurrent: boolean,
+    ): Promise<string | undefined> => {
+        repositoryNode ??= await this.pickRepository(pickerTitle)
+        if (!repositoryNode) { return }
+
+        const repositoryLabel = this.stashLabels.getName(repositoryNode)
+        let list = (await this.branchGit.getBranches(repositoryNode.path).promise)
+            .split(/\r?\n/g)
+
+        if (filterCurrent) {
+            const current = await this.branchGit.currentBranch(repositoryNode.path).promise
+            list = list.filter((branch) => branch !== current)
+        }
+
+        if (!list.length) {
+            return void vscode.window.showInformationMessage(`No branches found in the repository ${repositoryLabel}.`)
+        }
+
+        const options: vscode.QuickPickOptions = {
+            title: pickerTitle,
+            placeHolder: `${repositoryLabel} › Select Branch...`,
+            canPickMany: false,
+        }
+
+        const items: (vscode.QuickPickItem & { branch: string })[] = list.map((branch) => ({
+            branch,
+            label: branch,
+        }))
+
+        const selection: vscode.QuickPickItem & { branch: string } | undefined
+            = await vscode.window.showQuickPick(items, options)
+        if (!selection) { return }
+
+        return selection.branch
     }
 }

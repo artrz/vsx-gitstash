@@ -4,6 +4,7 @@
  */
 
 import * as vscode from 'vscode'
+import BranchGit from './Git/BranchGit'
 import Config from './Config'
 import FileNode from './StashNode/FileNode'
 import RepositoryNode from './StashNode/RepositoryNode'
@@ -37,6 +38,7 @@ export class StashCommands {
     private workspaceGit: WorkspaceGit
     private channel: vscode.OutputChannel
     private stashGit: StashGit
+    private branchGit: BranchGit
     private stashLabels: StashLabels
 
     constructor(config: Config, workspaceGit: WorkspaceGit, channel: vscode.OutputChannel, stashLabels: StashLabels) {
@@ -45,16 +47,17 @@ export class StashCommands {
         this.channel = channel
         this.stashLabels = stashLabels
         this.stashGit = new StashGit()
+        this.branchGit = new BranchGit()
     }
 
     /**
      * Generates a stash.
      */
-    public stash(
+    public async stash(
         repositoryNode: RepositoryNode,
         type: StashType,
         message?: string,
-    ): void {
+    ): Promise<void> {
         const params = []
 
         switch (type) {
@@ -81,7 +84,7 @@ export class StashCommands {
         }
 
         const exec = this.stashGit.stash(repositoryNode.path, params, message)
-        void this.handleExecution(repositoryNode, exec, 'Stash stored')
+        await this.handleExecution(repositoryNode, exec, 'Stash stored')
     }
 
     /**
@@ -130,9 +133,10 @@ export class StashCommands {
     /**
      * Pops a stash.
      */
-    public pop(stashNode: StashNode, withIndex: boolean): void {
-        const exec = this.stashGit.pop(stashNode.path, stashNode.index, withIndex)
-        void this.handleExecution(stashNode, exec, 'Stash popped')
+    public pop(node: RepositoryNode | StashNode, withIndex: boolean): void {
+        const index = node instanceof RepositoryNode ? 0 : node.index
+        const exec = this.stashGit.pop(node.path, index, withIndex)
+        void this.handleExecution(node, exec, 'Stash popped')
     }
 
     /**
@@ -189,6 +193,14 @@ export class StashCommands {
     public clear(repositoryNode: RepositoryNode): void {
         const exec = this.stashGit.clear(repositoryNode.path)
         void this.handleExecution(repositoryNode, exec, 'Stash list cleared')
+    }
+
+    /**
+     * Checkouts a branch.
+     */
+    public async checkout(repositoryNode: RepositoryNode, branch: string): Promise<void> {
+        const exec = this.branchGit.checkout(repositoryNode.path, branch)
+        await this.handleExecution(repositoryNode, exec, `Switched to branch ${branch}`)
     }
 
     /**
@@ -296,7 +308,7 @@ export class StashCommands {
         this.channel.appendLine(`${currentTime} [${tp}]`)
         this.channel.appendLine(` └ ${cwd} (${this.stashLabels.getName(node)})`)
         this.channel.appendLine(`   ${cmd}`)
-        this.channel.appendLine(`${result.trim()}\n\n`)
+        this.channel.appendLine(`${result}\n\n`)
     }
 
     /**

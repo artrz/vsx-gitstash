@@ -403,6 +403,16 @@
                 "category": "GitStash"
             },
             {
+                "command": "gitstash.quickSwitch",
+                "title": "Quick Switch",
+                "category": "GitStash"
+            },
+            {
+                "command": "gitstash.quickBack",
+                "title": "Quick Back",
+                "category": "GitStash"
+            },
+            {
                 "command": "gitstash.clipboardRepositoryPath",
                 "title": "Repository path",
                 "category": "GitStash"
