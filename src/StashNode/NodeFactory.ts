@@ -21,11 +21,15 @@ export default class NodeFactory {
         // May be undefined if the directory is not part of the workspace,
         // this happens on upper directories by negative search depth setting.
         const wsFolder = workspace.getWorkspaceFolder(Uri.file(path))
+        // In a root dir, the received path is contained in the workspace's path.
+        const isRoot = wsFolder?.uri.fsPath.includes(path) ?? false
+        console.log(`createRepositoryNode() ${path}`, wsFolder?.uri)
 
         return new RepositoryNode(
             dirname(path),
             basename(path),
-            wsFolder?.name,
+            // wsFolder is defined when isRoot is true but TS cannot infer that so add a ?
+            isRoot ? wsFolder?.name : undefined,
         )
     }
 
