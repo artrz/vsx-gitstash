@@ -3,16 +3,17 @@
  * GPL-3.0-only. See LICENSE.md in the project root for license details.
  */
 
-import { Disposable, Uri, WorkspaceFolder, WorkspaceFoldersChangeEvent, window } from 'vscode'
-import { FSWatcher, existsSync, watch } from 'fs'
+import { Disposable, WorkspaceFolder, WorkspaceFoldersChangeEvent, window } from 'vscode'
+import { existsSync, WatchEventType } from 'fs'
+import { PathWatcher, WatcherCallback } from './Foundation/PathWatcher'
 import { join } from 'path'
 
-type CallbackFunction = (event: Uri) => void
+type RepoWatcherCallback = (event: WatchEventType, filename: string) => void
 
 // https://github.com/Microsoft/vscode/issues/3025
 export default class implements Disposable {
-    private callback: CallbackFunction
-    private watchers: Map<string, FSWatcher> = new Map() as Map<string, FSWatcher>
+    private callback: RepoWatcherCallback
+    private watchers: Map<string, PathWatcher[]> = new Map() as Map<string, PathWatcher[]>
 
     /**
      * Creates a new watcher.
@@ -20,9 +21,9 @@ export default class implements Disposable {
      * @param repos    the repositories to watch
      * @param callback the callback to run when detecting changes
      */
-    constructor(repos: string[], callback: CallbackFunction) {
+    constructor(repos: string[], callback: RepoWatcherCallback) {
         this.callback = callback
-        repos.forEach((directory) => { this.registerProjectWatcher(directory) })
+        repos.forEach((directory) => { this.registerProjectWatchers(directory) })
     }
 
     /**
@@ -33,67 +34,77 @@ export default class implements Disposable {
     public configure(directoryChanges: WorkspaceFoldersChangeEvent): void {
         directoryChanges.added.forEach((changedDirectory: WorkspaceFolder) => {
             const directory = changedDirectory.uri.fsPath
-            this.registerProjectWatcher(directory)
+            this.registerProjectWatchers(directory)
         })
 
         directoryChanges.removed.forEach((changedDirectory: WorkspaceFolder) => {
             const directory = changedDirectory.uri.fsPath
-            this.removeProjectWatcher(directory)
+            this.removeProjectWatchers(directory)
         })
     }
 
     /**
      * Disposes this object.
+     * @see Disposable.dispose()
      */
     public dispose(): void {
         for (const path of this.watchers.keys()) {
-            this.removeProjectWatcher(path)
+            this.removeProjectWatchers(path)
         }
     }
 
     /**
-     * Registers a new project directory watcher.
+     * Registers the project directory watchers.
      *
      * @param projectPath the directory path
      */
-    private registerProjectWatcher(projectPath: string): void {
+    private registerProjectWatchers(projectPath: string): void {
         global.dbg(`[FSWatch] Watch ${projectPath} ...`)
-        if (this.watchers.has(projectPath)) {
-            return
-        }
-
         const pathToMonitor = join(projectPath, '.git', 'refs')
-
         if (!existsSync(pathToMonitor)) {
             return
         }
 
-        try {
-            const watcher = watch(pathToMonitor, (event: string, filename) => {
-                if (filename?.includes('stash')) {
-                    this.callback(Uri.file(projectPath))
-                }
-            })
-
-            this.watchers.set(projectPath, watcher)
-        }
-        catch (error) {
-            console.error(error)
-            void window.showErrorMessage(`Unable to a create a stashes monitor for
-            ${projectPath}. This may happen on NFS or if the path is a link`)
-        }
+        this.registerPathWatcher(pathToMonitor, projectPath)
     }
 
     /**
-     * Removes an active project directory watcher.
-     *
-     * @param path the directory path
+     * Creates a FS Watcher for a directory.
+     * @param pathToMonitor the path to monitor
+     * @param projectPath   the path to use in the callback
      */
-    private removeProjectWatcher(path: string): void {
-        if (this.watchers.has(path)) {
-            global.dbg(`[FSWatch] Stop watching ${path} ...`)
-            this.watchers.get(path)?.close()
-            this.watchers.delete(path)
+    private registerPathWatcher(pathToMonitor: string, projectPath: string) {
+        const watchers = this.watchers.get(projectPath)
+            ?? this.watchers.set(projectPath, []).get(projectPath)! // eslint-disable-line @typescript-eslint/no-non-null-assertion
+
+        if (watchers.length && watchers.find((watcher) => watcher.for(pathToMonitor))) {
+            return
         }
+
+        try {
+            // Create the watcher callback which will review if a reaction is needed
+            // based on the changed (stash) file.
+            const callback: WatcherCallback = (event, filename) => {
+                if (filename?.includes('stash')) {
+                    this.callback(event, projectPath)
+                }
+            }
+
+            watchers.push(PathWatcher.watch(pathToMonitor, callback))
+        }
+        catch (error) {
+            const msg = `Unable to create a stashes monitor for ${pathToMonitor}.`
+                + ' This may happen on NFS or if the path is a link.'
+                + ' See the console for details'
+            console.error(msg)
+            console.error(error)
+            void window.showErrorMessage(msg)
+        }
+    }
+
+    private removeProjectWatchers(path: string): void {
+        global.dbg(`[FSWatch] Stop watching ${path} ...`)
+        this.watchers.get(path)?.forEach((watcher) => { watcher.dispose() })
+        this.watchers.delete(path)
     }
 }

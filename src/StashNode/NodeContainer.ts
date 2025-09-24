@@ -37,7 +37,7 @@ export default class NodeContainer {
      * @param eagerLoadStashes indicates if children should be preloaded
      */
     public async getRepositories(eagerLoadStashes: boolean): Promise<RepositoryNode[]> {
-        const paths = await this.gitWorkspace.getRepositories(false)
+        const paths = await this.gitWorkspace.getRepositories()
 
         const repositoryNodes: RepositoryNode[] = []
         for (const repositoryPath of paths) {
