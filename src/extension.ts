@@ -79,8 +79,9 @@ export function activate(context: ExtensionContext): void {
 
     const watcherManager = new FileSystemWatcherManager(
         wsGit2.getRepositories(),
-        (projectDirectory: Uri) => {
-            treeProvider.reload('update', projectDirectory)
+        (event, projectDirectory) => {
+            const file = Uri.file(projectDirectory)
+            treeProvider.reload('update', file)
         },
     )
     global.dbg('[boot] FS Watcher created')
