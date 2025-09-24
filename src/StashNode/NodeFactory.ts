@@ -23,7 +23,6 @@ export default class NodeFactory {
         const wsFolder = workspace.getWorkspaceFolder(Uri.file(path))
         // In a root dir, the received path is contained in the workspace's path.
         const isRoot = wsFolder?.uri.fsPath.includes(path) ?? false
-        console.log(`createRepositoryNode() ${path}`, wsFolder?.uri)
 
         return new RepositoryNode(
             dirname(path),
