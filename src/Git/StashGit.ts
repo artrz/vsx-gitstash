@@ -47,7 +47,7 @@ export default class StashGit extends Git {
             '--format=%h',
         ]
 
-        return (await this.exec(params, cwd)).out.trim() || null
+        return (await this.exec(params, cwd).promise).out.trim() || null
     }
 
     /**
@@ -64,7 +64,7 @@ export default class StashGit extends Git {
             '--format=%gd%n%ci%n%H%n%h%n%T%n%P%n%gs%n%N',
         ]
 
-        const list = (await this.exec(params, cwd)).out
+        const list = (await this.exec(params, cwd).promise).out
             .split('\0')
             .filter((rawStash: string) => rawStash.trim().length)
             .map((rawStash: string) => {
@@ -116,7 +116,7 @@ export default class StashGit extends Git {
         ]
 
         try {
-            const stashData = (await this.exec(params, cwd)).out.trim()
+            const stashData = (await this.exec(params, cwd).promise).out.trim()
 
             if (stashData.length > 0) {
                 const stashedFiles = stashData.split(/\r?\n/g)
@@ -171,7 +171,7 @@ export default class StashGit extends Git {
             `stash@{${index}}^3`,
         ]
 
-        return (await this.exec(params, cwd)).out
+        return (await this.exec(params, cwd).promise).out
             .trim()
             .split('\0')
             .filter((entry) => entry.length)
@@ -199,7 +199,7 @@ export default class StashGit extends Git {
             `stash@{${index}}:${file}`,
         ]
 
-        return this.exec(params, cwd)
+        return this.exec(params, cwd).promise
     }
 
     /**
@@ -224,7 +224,7 @@ export default class StashGit extends Git {
             `stash@{${index}}^1:${file}`,
         ]
 
-        return this.exec(params, cwd)
+        return this.exec(params, cwd).promise
     }
 
     /**
@@ -244,7 +244,7 @@ export default class StashGit extends Git {
             `stash@{${index}}^3:${file}`,
         ]
 
-        return this.exec(params, cwd)
+        return this.exec(params, cwd).promise
     }
 
     // -------------------------------------------------------------------------
@@ -263,7 +263,7 @@ export default class StashGit extends Git {
             params.push('--message', message)
         }
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 
     /**
@@ -282,7 +282,7 @@ export default class StashGit extends Git {
 
         params.push('--')
 
-        return this.execO(params.concat(filePaths), cwd)
+        return this.exec(params.concat(filePaths), cwd)
     }
 
     /**
@@ -294,7 +294,7 @@ export default class StashGit extends Git {
             'clear',
         ]
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 
     /**
@@ -312,7 +312,7 @@ export default class StashGit extends Git {
 
         params.push(`stash@{${index}}`)
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 
     /**
@@ -330,7 +330,7 @@ export default class StashGit extends Git {
 
         params.push(`stash@{${index}}`)
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 
     /**
@@ -344,7 +344,7 @@ export default class StashGit extends Git {
             `stash@{${index}}`,
         ]
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 
     /**
@@ -357,7 +357,7 @@ export default class StashGit extends Git {
             `stash@{${index}}`,
         ]
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 
     /**
@@ -370,7 +370,7 @@ export default class StashGit extends Git {
             subPath,
         ]
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 
     /**
@@ -383,7 +383,7 @@ export default class StashGit extends Git {
             subPath,
         ]
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 
     /**
@@ -396,6 +396,6 @@ export default class StashGit extends Git {
             '-z',
         ]
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 }

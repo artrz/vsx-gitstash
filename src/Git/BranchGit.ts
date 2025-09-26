@@ -16,11 +16,9 @@ export default class BranchGit extends Git {
             'refs/heads/',
         ]
 
-        const exec = this.execO(params, cwd)
-        exec.promise = exec.promise.then(
-            (result) => result.replaceAll('refs/heads/', '').trim(),
-        )
-        return exec
+        return this.exec(params, cwd, (result) => {
+            result.stdout = result.stdout?.replaceAll('refs/heads/', '').trim()
+        })
     }
 
     /**
@@ -33,9 +31,9 @@ export default class BranchGit extends Git {
             'HEAD',
         ]
 
-        const exec = this.execO(params, cwd)
-        exec.promise = exec.promise.then((result) => result.trim())
-        return exec
+        return this.exec(params, cwd, (result) => {
+            result.stdout = result.stdout?.trim()
+        })
     }
 
     /**
@@ -47,6 +45,6 @@ export default class BranchGit extends Git {
             branch,
         ]
 
-        return this.execO(params, cwd)
+        return this.exec(params, cwd)
     }
 }

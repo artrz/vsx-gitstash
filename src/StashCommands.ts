@@ -209,7 +209,7 @@ export class StashCommands {
     private async noMergeConflicts(cwd: string): Promise<boolean | undefined> {
         const exec = this.stashGit.statusP2(cwd)
         try {
-            const output = await exec.promise
+            const output = (await exec.promise).out
             return undefined !== output
                 .split('\0')
                 .find((entry) => entry.startsWith('u'))
@@ -227,7 +227,7 @@ export class StashCommands {
         msg: string,
     ): Promise<boolean> {
         try {
-            const output = await exec.promise
+            const output = (await exec.promise).out
             this.inform(node, exec.args, output, msg)
             return true
         }

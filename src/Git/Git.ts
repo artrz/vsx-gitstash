@@ -3,38 +3,31 @@
  * GPL-3.0-only. See LICENSE.md in the project root for license details.
  */
 
-import Executor, { Execution as BaseExecution, ExeResult as BaseExeResult } from '../Foundation/Executor'
+import { Execution as BaseExecution, ExeResult as BaseExeResult, exec } from '../Foundation/Executor'
 
 export type ExeResult = BaseExeResult
 export type Execution = BaseExecution
 
-export default class extends Executor {
+export default class Git {
     /**
-     * Executes a git command.
-     *
-     * @param args     the string array with the command and argument list
-     * @param cwd      the string with the current working directory
-     * @param encoding the BufferEncoding string with the optional encoding to replace utf8
-     */
-    public async exec(
-        args: string[],
-        cwd: string,
-        env?: Record<string, unknown>,
-        encoding?: BufferEncoding,
-    ): Promise<ExeResult> {
-        return this.call('git', args, cwd, env, encoding)
-    }
-
-    /**
-     * Generates an execution object containing the execution promise and the arguments
+     * Generates an execution object containing the execution promise and the command
+     * / arguments.
      * used.
      */
-    public execO(
+    public exec(
         args: string[],
         cwd: string,
+        callback?: (r: ExeResult) => void,
         env?: Record<string, unknown>,
         encoding?: BufferEncoding,
     ): Execution {
-        return this.callObj('git', args, cwd, env, encoding)
+        const ex = exec('git', args, cwd, env, encoding)
+        if (callback) {
+            ex.promise = ex.promise.then((result) => {
+                callback(result)
+                return result
+            })
+        }
+        return ex
     }
 }
