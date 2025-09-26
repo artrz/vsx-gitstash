@@ -3,8 +3,9 @@
  * GPL-3.0-only. See LICENSE.md in the project root for license details.
  */
 
-import Executor, { Execution as BaseExecution } from '../Foundation/Executor'
+import Executor, { Execution as BaseExecution, ExeResult as BaseExeResult } from '../Foundation/Executor'
 
+export type ExeResult = BaseExeResult
 export type Execution = BaseExecution
 
 export default class extends Executor {
@@ -20,7 +21,7 @@ export default class extends Executor {
         cwd: string,
         env?: Record<string, unknown>,
         encoding?: BufferEncoding,
-    ): Promise<string> {
+    ): Promise<ExeResult> {
         return this.call('git', args, cwd, env, encoding)
     }
 

@@ -30,28 +30,28 @@ export default class implements vscode.TextDocumentContentProvider {
             return ''
         }
 
-        let contents: Promise<string> = Promise.resolve<string>('')
+        let contents = ''
 
         try {
             if (type === FileNodeType.Added) {
-                contents = this.stashGit.getStashContents(cwd, index, path)
+                contents = (await this.stashGit.getStashContents(cwd, index, path)).out
             }
             else if (type === FileNodeType.Deleted) {
-                contents = this.stashGit.getParentContents(cwd, index, path)
+                contents = (await this.stashGit.getParentContents(cwd, index, path)).out
             }
             else if (type === FileNodeType.Modified) {
                 contents = side === FileStage.Parent
-                    ? this.stashGit.getParentContents(cwd, index, path)
-                    : this.stashGit.getStashContents(cwd, index, path)
+                    ? (await this.stashGit.getParentContents(cwd, index, path)).out
+                    : (await this.stashGit.getStashContents(cwd, index, path)).out
             }
             else if (type === FileNodeType.Renamed) {
                 contents = side === FileStage.Parent
-                    ? this.stashGit.getParentContents(cwd, index, oldPath)
-                    : this.stashGit.getStashContents(cwd, index, path)
+                    ? (await this.stashGit.getParentContents(cwd, index, oldPath)).out
+                    : (await this.stashGit.getStashContents(cwd, index, path)).out
             }
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             else if (type === FileNodeType.Untracked) {
-                contents = this.stashGit.getThirdParentContents(cwd, index, path)
+                contents = (await this.stashGit.getThirdParentContents(cwd, index, path)).out
             }
             else {
                 console.warn(`provideTextDocumentContent type[${params.type}] side[${side}]`)
@@ -61,7 +61,8 @@ export default class implements vscode.TextDocumentContentProvider {
         catch (e) {
             console.log(`provideTextDocumentContent type[${type}] side[${side}]`)
             console.log(uri.query)
-            console.log(e)
+            console.error(e)
+            throw e
         }
 
         return contents

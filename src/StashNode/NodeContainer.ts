@@ -124,36 +124,36 @@ export default class NodeContainer {
         if (fileNode.isAdded) {
             return this.stashGit.getStashContents(
                 fileNode.parent.path, fileNode.parent.index, fileNode.relativePath,
-            )
+            ).then((r) => r.out)
         }
         if (fileNode.isDeleted) {
             return this.stashGit.getParentContents(
                 fileNode.parent.path, fileNode.parent.index, fileNode.relativePath,
-            )
+            ).then((r) => r.out)
         }
         if (fileNode.isModified) {
             return stage === FileStage.Parent
                 ? this.stashGit.getParentContents(
                     fileNode.parent.path, fileNode.parent.index, fileNode.relativePath,
-                )
+                ).then((r) => r.out)
                 : this.stashGit.getStashContents(
                     fileNode.parent.path, fileNode.parent.index, fileNode.relativePath,
-                )
+                ).then((r) => r.out)
         }
         if (fileNode.isRenamed) {
             return stage === FileStage.Parent
                 ? this.stashGit.getParentContents(
                     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                     fileNode.parent.path, fileNode.parent.index, fileNode.oldRelativePath!,
-                )
+                ).then((r) => r.out)
                 : this.stashGit.getStashContents(
                     fileNode.parent.path, fileNode.parent.index, fileNode.relativePath,
-                )
+                ).then((r) => r.out)
         }
         if (fileNode.isUntracked) {
             return this.stashGit.getThirdParentContents(
                 fileNode.parent.path, fileNode.parent.index, fileNode.relativePath,
-            )
+            ).then((r) => r.out)
         }
 
         throw new Error(`Unsupported fileNode type: ${fileNode.type}`)

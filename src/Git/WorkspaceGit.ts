@@ -42,7 +42,7 @@ export default class WorkspaceGit extends Git {
         const paths: string[] = []
         for (const cwd of Workspace.getRootPaths(depth, ignored)) {
             try {
-                let gitPath = (await this.exec(params, cwd)).trim()
+                let gitPath = (await this.exec(params, cwd)).out.trim()
                 if (gitPath.length < 1) {
                     continue
                 }
