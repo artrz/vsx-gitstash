@@ -170,7 +170,7 @@ export class Commands {
             })
 
             if (typeof stashMessage === 'string') {
-                void this.stashCommands.stash(repositoryNode, selection.type, stashMessage)
+                this.stashCommands.stash(repositoryNode, selection.type, stashMessage)
             }
         }
     }
@@ -394,7 +394,7 @@ export class Commands {
         const branch = await this.pickBranch(repositoryNode, 'Quick switch', true)
         if (!branch) { return }
 
-        await this.stashCommands.stash(
+        this.stashCommands.stash(
             repositoryNode,
             StashCommands.StashType.IncludeUntracked,
             `🤖 State before switching to '${branch}'`,
@@ -405,7 +405,7 @@ export class Commands {
         }
         catch { /* empty */ }
 
-        await this.stashCommands.checkout(repositoryNode, branch)
+        this.stashCommands.checkout(repositoryNode, branch)
     }
 
     public quickBack = async (repositoryNode?: RepositoryNode) => {
@@ -415,7 +415,7 @@ export class Commands {
             ?? await this.pickBranch(repositoryNode, 'Quick back', true)
         if (!branch) { return }
 
-        await this.stashCommands.checkout(repositoryNode, branch)
+        this.stashCommands.checkout(repositoryNode, branch)
         this.previousBranch = undefined
 
         this.stashCommands.pop(repositoryNode, true)

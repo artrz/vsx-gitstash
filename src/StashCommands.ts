@@ -9,11 +9,10 @@ import Config from './Config'
 import FileNode from './StashNode/FileNode'
 import RepositoryNode from './StashNode/RepositoryNode'
 import StashGit from './Git/StashGit'
-import StashLabels from './StashLabels'
 import StashNode from './StashNode/StashNode'
 import WorkspaceGit from './Git/WorkspaceGit'
 import { Execution } from './Git/Git'
-import { toDateTimeIso } from './DateFormat'
+import { LogChannel } from './LogChannel'
 
 enum StashType {
     Simple,
@@ -39,18 +38,17 @@ export class StashCommands {
         private workspaceGit: WorkspaceGit,
         private stashGit: StashGit,
         private branchGit: BranchGit,
-        private channel: vscode.OutputChannel,
-        private stashLabels: StashLabels,
+        private channel: LogChannel,
     ) { }
 
     /**
      * Generates a stash.
      */
-    public async stash(
+    public stash(
         repositoryNode: RepositoryNode,
         type: StashType,
         message?: string,
-    ): Promise<void> {
+    ): void {
         const params = []
 
         switch (type) {
@@ -77,7 +75,7 @@ export class StashCommands {
         }
 
         const exec = this.stashGit.stash(repositoryNode.path, params, message)
-        await this.handleExecution(repositoryNode, exec, 'Stash stored')
+        this.handleExecution(repositoryNode, exec, 'Stash stored')
     }
 
     /**
@@ -129,7 +127,7 @@ export class StashCommands {
     public pop(node: RepositoryNode | StashNode, withIndex: boolean): void {
         const index = node instanceof RepositoryNode ? 0 : node.index
         const exec = this.stashGit.pop(node.path, index, withIndex)
-        void this.handleExecution(node, exec, 'Stash popped')
+        this.handleExecution(node, exec, 'Stash popped')
     }
 
     /**
@@ -137,7 +135,7 @@ export class StashCommands {
      */
     public apply(stashNode: StashNode, withIndex: boolean): void {
         const exec = this.stashGit.apply(stashNode.path, stashNode.index, withIndex)
-        void this.handleExecution(stashNode, exec, 'Stash applied')
+        this.handleExecution(stashNode, exec, 'Stash applied')
     }
 
     /**
@@ -145,7 +143,7 @@ export class StashCommands {
      */
     public branch(stashNode: StashNode, name: string): void {
         const exec = this.stashGit.branch(stashNode.path, stashNode.index, name)
-        void this.handleExecution(stashNode, exec, 'Stash branched')
+        this.handleExecution(stashNode, exec, 'Stash branched')
     }
 
     /**
@@ -153,7 +151,7 @@ export class StashCommands {
      */
     public drop(stashNode: StashNode): void {
         const exec = this.stashGit.drop(stashNode.path, stashNode.index)
-        void this.handleExecution(stashNode, exec, 'Stash dropped')
+        this.handleExecution(stashNode, exec, 'Stash dropped')
     }
 
     /**
@@ -165,7 +163,7 @@ export class StashCommands {
             fileNode.parent.index,
             fileNode.relativePath,
         )
-        void this.handleExecution(fileNode, exec, 'Changes from file applied')
+        this.handleExecution(fileNode, exec, 'Changes from file applied')
     }
 
     /**
@@ -177,7 +175,7 @@ export class StashCommands {
             fileNode.parent.index,
             fileNode.relativePath,
         )
-        void this.handleExecution(fileNode, exec, 'File created')
+        this.handleExecution(fileNode, exec, 'File created')
     }
 
     /**
@@ -185,15 +183,15 @@ export class StashCommands {
      */
     public clear(repositoryNode: RepositoryNode): void {
         const exec = this.stashGit.clear(repositoryNode.path)
-        void this.handleExecution(repositoryNode, exec, 'Stash list cleared')
+        this.handleExecution(repositoryNode, exec, 'Stash list cleared')
     }
 
     /**
      * Checkouts a branch.
      */
-    public async checkout(repositoryNode: RepositoryNode, branch: string): Promise<void> {
+    public checkout(repositoryNode: RepositoryNode, branch: string): void {
         const exec = this.branchGit.checkout(repositoryNode.path, branch)
-        await this.handleExecution(repositoryNode, exec, `Switched to branch ${branch}`)
+        this.handleExecution(repositoryNode, exec, `Switched to branch ${branch}`)
     }
 
     /**
@@ -214,94 +212,29 @@ export class StashCommands {
         }
     }
 
-    private async handleExecution(
+    private handleExecution(
         node: RepositoryNode | StashNode | FileNode,
         exec: Execution,
         msg: string,
-    ): Promise<boolean> {
-        try {
-            const output = (await exec.promise).out
-            this.inform(node, exec.args, output, msg)
-            return true
-        }
-        catch (error) {
-            this.informError(node, exec.args, error)
-            return false
-        }
-    }
-
-    /**
-     * Logs the command to the extension channel.
-     *
-     * @param node             the optional involved node
-     * @param params           the git command params
-     * @param result           the result content
-     * @param notificationText the optional notification message
-     * @param type             the message type
-     */
-    private inform(
-        node: RepositoryNode | StashNode | FileNode,
-        params: string[],
-        result: string,
-        notificationText: string,
-        type: NotificationType = NotificationType.Message,
     ): void {
-        this.log(node, params, result, type)
+        exec.promise.then((exeResult) => {
+            this.channel.appendLine(`  └ context: ${node.path}`)
+            this.channel.appendLine(exeResult.out)
 
-        if (type !== NotificationType.Message || this.config.get<boolean>('notifications.success.show')) {
-            this.notify(notificationText, type)
-        }
-    }
+            if (this.config.get<boolean>('notifications.success.show')) {
+                this.notify(msg, NotificationType.Message)
+            }
+        }).catch((error: unknown) => {
+            console.error('StashCommands.informError()')
+            console.error(error)
+            console.error('---')
 
-    private informError(
-        node: RepositoryNode | StashNode | FileNode,
-        params: string[],
-        error: unknown,
-    ) {
-        console.error('StashCommands.informError()')
-        console.error(error)
-        console.error('---------')
+            const msg = error instanceof Error
+                ? error.message
+                : 'An unexpected error occurred. See the console for details. (err1)'
 
-        if (error instanceof Error) {
-            const result = error.message
-            this.inform(node, params, result, result, NotificationType.Error)
-        }
-        else {
-            let result = 'Unknown error'
-            try { result = JSON.stringify(error) }
-            catch { /* empty */ }
-            const excerpt = 'An unexpected error happened. See the console for details.'
-            this.inform(node, params, result, excerpt, NotificationType.Error)
-        }
-    }
-
-    /**
-     * Logs the command to the extension channel.
-     *
-     * @param node   the source node
-     * @param params the git command params
-     * @param result the string result message
-     * @param type   the string message type
-     */
-    private log(
-        node: RepositoryNode | StashNode | FileNode,
-        params: string[],
-        result: string,
-        type: NotificationType,
-    ): void {
-        if (this.config.get<boolean>('log.autoclear')) {
-            this.channel.clear()
-        }
-
-        const currentTime = toDateTimeIso(new Date())
-        const cwd = node instanceof FileNode ? node.parent.path : node.path
-        const cmd = `git ${params.join(' ')}`
-        const tp = type === NotificationType.Message ? 'info' : type as string
-
-        this.channel.appendLine(`${currentTime} [${tp}]`)
-        this.channel.appendLine(` └ ${cwd} (${this.stashLabels.getName(node)})`)
-        this.channel.appendLine(`   ${cmd}`)
-        this.channel.appendLine(`${result}\n\n`)
+            this.notify(msg, NotificationType.Error)
+        })
     }
 
     /**

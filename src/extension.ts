@@ -3,7 +3,7 @@
  * GPL-3.0-only. See LICENSE.md in the project root for license details.
  */
 
-import { ConfigurationChangeEvent, ExtensionContext, Uri, WorkspaceFoldersChangeEvent, commands, window, workspace } from 'vscode'
+import { ConfigurationChangeEvent, ExtensionContext, Uri, WorkspaceFoldersChangeEvent, commands, workspace } from 'vscode'
 import { Commands } from './Commands'
 import BranchGit from './Git/BranchGit'
 import Config from './Config'
@@ -12,6 +12,8 @@ import DocumentContentProvider from './Document/DocumentContentProvider'
 import FileNode from './StashNode/FileNode'
 import FileSystemWatcherManager from './FileSystemWatcherManager'
 import NodeContainer from './Explorer/TreeNode/NodeContainer'
+import { Execution } from './Foundation/Executor'
+import { LogChannel } from './LogChannel'
 import { StashCommands } from './StashCommands'
 import StashGit from './Git/StashGit'
 import StashLabels from './StashLabels'
@@ -28,13 +30,29 @@ export function activate(context: ExtensionContext): void {
 
     const config = new Config(configPrefix)
 
-    const wsGit = new WorkspaceGit(config)
-    const wsGit2 = new WorkspaceGit(config)
-    const stashGit = new StashGit()
-    const stashGit2 = new StashGit()
-    const stashGit3 = new StashGit()
-    const branchGit = new BranchGit()
-    const branchGit2 = new BranchGit()
+    const logChannel = new LogChannel(channelName)
+    const gitCallback = (exec: Execution) => {
+        exec.promise = exec.promise
+            .then((exeResult) => {
+                if (config.get<boolean>(config.key.logAutoclear)) {
+                    logChannel.clear()
+                }
+                logChannel.logExeResult(exec.args, exeResult)
+                return exeResult
+            })
+            .catch((error: unknown) => {
+                logChannel.logExeError(exec.args, error)
+                throw error
+            })
+    }
+
+    const wsGit = new WorkspaceGit(config, gitCallback)
+    const wsGit2 = new WorkspaceGit(config, gitCallback)
+    const stashGit = new StashGit(gitCallback)
+    const stashGit2 = new StashGit(gitCallback)
+    const stashGit3 = new StashGit(gitCallback)
+    const branchGit = new BranchGit(gitCallback)
+    const branchGit2 = new BranchGit(gitCallback)
 
     notifyHasRepository(wsGit2)
 
@@ -51,7 +69,7 @@ export function activate(context: ExtensionContext): void {
 
     const stashCommands = new Commands(
         nodeContainer,
-        new StashCommands(config, wsGit, stashGit2, branchGit, window.createOutputChannel(channelName), stashLabels),
+        new StashCommands(config, wsGit, stashGit2, branchGit, logChannel),
         new DiffDisplayer(uriGenerator, stashLabels),
         stashLabels,
         branchGit2,
