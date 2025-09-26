@@ -17,17 +17,9 @@ export default class Git {
     public exec(
         args: string[],
         cwd: string,
-        callback?: (r: ExeResult) => void,
         env?: Record<string, unknown>,
         encoding?: BufferEncoding,
     ): Execution {
-        const ex = exec('git', args, cwd, env, encoding)
-        if (callback) {
-            ex.promise = ex.promise.then((result) => {
-                callback(result)
-                return result
-            })
-        }
-        return ex
+        return exec('git', args, cwd, env, encoding)
     }
 }
