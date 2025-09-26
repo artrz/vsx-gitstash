@@ -17,7 +17,7 @@ import WorkspaceGit from '../Git/WorkspaceGit'
 export default class NodeContainer {
     constructor(
         protected workspaceGit: WorkspaceGit,
-        protected stashGit = new StashGit(),
+        protected stashGit: StashGit,
         protected nodeFactory = new NodeFactory(),
     ) {
     }

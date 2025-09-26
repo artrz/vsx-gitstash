@@ -32,7 +32,7 @@ export class Commands {
         private stashCommands: StashCommands,
         private displayer: DiffDisplayer,
         private stashLabels: StashLabels,
-        private branchGit: BranchGit = new BranchGit(),
+        private branchGit: BranchGit,
     ) {
     }
 

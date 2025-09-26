@@ -34,21 +34,14 @@ enum NotificationType {
 export class StashCommands {
     static StashType = StashType
 
-    private config: Config
-    private workspaceGit: WorkspaceGit
-    private channel: vscode.OutputChannel
-    private stashGit: StashGit
-    private branchGit: BranchGit
-    private stashLabels: StashLabels
-
-    constructor(config: Config, workspaceGit: WorkspaceGit, channel: vscode.OutputChannel, stashLabels: StashLabels) {
-        this.config = config
-        this.workspaceGit = workspaceGit
-        this.channel = channel
-        this.stashLabels = stashLabels
-        this.stashGit = new StashGit()
-        this.branchGit = new BranchGit()
-    }
+    constructor(
+        private config: Config,
+        private workspaceGit: WorkspaceGit,
+        private stashGit: StashGit,
+        private branchGit: BranchGit,
+        private channel: vscode.OutputChannel,
+        private stashLabels: StashLabels,
+    ) { }
 
     /**
      * Generates a stash.

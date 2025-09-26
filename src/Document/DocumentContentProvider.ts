@@ -9,8 +9,14 @@ import FileNodeType from '../StashNode/FileNodeType'
 
 export default class implements vscode.TextDocumentContentProvider {
     private onDidChangeEmitter = new vscode.EventEmitter<vscode.Uri>()
-    private stashGit = new StashGit()
 
+    constructor(
+        private stashGit: StashGit,
+    ) { }
+
+    /**
+     * @see vscode.TextDocumentContentProvider.provideTextDocumentContent
+     */
     public async provideTextDocumentContent(uri: vscode.Uri): Promise<string> {
         const params = uri.query.split('&').reduce<Record<string, string>>((data, kv) => {
             const [key, value] = kv.split('=')

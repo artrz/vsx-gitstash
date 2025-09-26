@@ -10,6 +10,7 @@ import FileNode from './FileNode'
 import MessageNode from './MessageNode'
 import Node from '../../StashNode/Node'
 import NodeFactory from './NodeFactory'
+import StashGit from '../../Git/StashGit'
 import StashNode from '../../StashNode/StashNode'
 import WorkspaceGit from '../../Git/WorkspaceGit'
 
@@ -17,11 +18,12 @@ import WorkspaceGit from '../../Git/WorkspaceGit'
  * A repository implementation using another name to avoid confusion with git repos.
  */
 export default class NodeContainer extends BaseNodeContainer {
-    protected nodeFactory: NodeFactory
-
-    constructor(workspaceGit: WorkspaceGit) {
-        super(workspaceGit)
-        this.nodeFactory = new NodeFactory()
+    constructor(
+        protected workspaceGit: WorkspaceGit,
+        protected stashGit: StashGit,
+        protected nodeFactory = new NodeFactory(),
+    ) {
+        super(workspaceGit, stashGit)
     }
 
     /**

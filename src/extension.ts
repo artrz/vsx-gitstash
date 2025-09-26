@@ -5,6 +5,7 @@
 
 import { ConfigurationChangeEvent, ExtensionContext, Uri, WorkspaceFoldersChangeEvent, commands, window, workspace } from 'vscode'
 import { Commands } from './Commands'
+import BranchGit from './Git/BranchGit'
 import Config from './Config'
 import DiffDisplayer from './DiffDisplayer'
 import DocumentContentProvider from './Document/DocumentContentProvider'
@@ -12,6 +13,7 @@ import FileNode from './StashNode/FileNode'
 import FileSystemWatcherManager from './FileSystemWatcherManager'
 import NodeContainer from './Explorer/TreeNode/NodeContainer'
 import { StashCommands } from './StashCommands'
+import StashGit from './Git/StashGit'
 import StashLabels from './StashLabels'
 import TreeDataProvider from './Explorer/TreeDataProvider'
 import TreeDecorationProvider from './Explorer/TreeDecorationProvider'
@@ -26,25 +28,37 @@ export function activate(context: ExtensionContext): void {
 
     const config = new Config(configPrefix)
 
-    const nodeContainer = new NodeContainer(new WorkspaceGit(config))
-    const stashLabels = new StashLabels(config)
-    const uriGenerator = new UriGenerator(nodeContainer)
-
-    const treeProvider = new TreeDataProvider(config, nodeContainer, uriGenerator, stashLabels)
-
     const wsGit = new WorkspaceGit(config)
-    const stashCommands = new Commands(
+    const wsGit2 = new WorkspaceGit(config)
+    const stashGit = new StashGit()
+    const stashGit2 = new StashGit()
+    const stashGit3 = new StashGit()
+    const branchGit = new BranchGit()
+    const branchGit2 = new BranchGit()
+
+    notifyHasRepository(wsGit2)
+
+    const nodeContainer = new NodeContainer(wsGit, stashGit)
+    const uriGenerator = new UriGenerator(nodeContainer)
+    const stashLabels = new StashLabels(config)
+
+    const treeProvider = new TreeDataProvider(
+        config,
         nodeContainer,
-        new StashCommands(config, wsGit, window.createOutputChannel(channelName), stashLabels),
-        new DiffDisplayer(uriGenerator, stashLabels),
+        uriGenerator,
         stashLabels,
     )
 
-    const workspaceGit = new WorkspaceGit(config)
-    notifyHasRepository(workspaceGit)
+    const stashCommands = new Commands(
+        nodeContainer,
+        new StashCommands(config, wsGit, stashGit2, branchGit, window.createOutputChannel(channelName), stashLabels),
+        new DiffDisplayer(uriGenerator, stashLabels),
+        stashLabels,
+        branchGit2,
+    )
 
     const watcherManager = new FileSystemWatcherManager(
-        workspaceGit.getRepositories(),
+        wsGit2.getRepositories(),
         (projectDirectory: Uri) => {
             treeProvider.reload('update', projectDirectory)
         },
@@ -54,7 +68,7 @@ export function activate(context: ExtensionContext): void {
         new TreeDecorationProvider(config),
         treeProvider.view,
 
-        workspace.registerTextDocumentContentProvider(UriGenerator.fileScheme, new DocumentContentProvider()),
+        workspace.registerTextDocumentContentProvider(UriGenerator.fileScheme, new DocumentContentProvider(stashGit3)),
 
         commands.registerCommand('gitstash.settings.open', () => commands.executeCommand(
             'workbench.action.openSettings', `@ext:${context.extension.id}`)),
@@ -98,7 +112,7 @@ export function activate(context: ExtensionContext): void {
         commands.registerCommand('gitstash.clipboardInfo', stashCommands.clipboardFromTemplate),
 
         workspace.onDidChangeWorkspaceFolders((e: WorkspaceFoldersChangeEvent) => {
-            notifyHasRepository(workspaceGit)
+            notifyHasRepository(wsGit2)
             watcherManager.configure(e)
             treeProvider.reload('settings')
         }),
