@@ -277,16 +277,13 @@ export class Commands {
         const repositoryLabel = this.stashLabels.getName(stashNode.parent)
 
         const branchName = await vscode.window.showInputBox({
-            title: 'Apply Stash',
+            title: 'Branch Stash',
             placeHolder: `${repositoryLabel} › ${stashLabel} › ...`,
-            prompt: 'Write a name',
+            prompt: 'Set the branch name',
         })
 
         if (branchName?.trim().length) {
             this.stashCommands.branch(stashNode, branchName)
-        }
-        else {
-            void vscode.window.showErrorMessage('A branch name is required.')
         }
     }
 
