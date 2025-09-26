@@ -3,7 +3,7 @@
  * GPL-3.0-only. See LICENSE.md in the project root for license details.
  */
 
-import Git, { ExeResult } from './Git'
+import Git, { Execution, ExeResult } from './Git'
 
 export interface Stash {
     index: number
@@ -35,6 +35,10 @@ export const enum FileStage {
 }
 
 export default class StashGit extends Git {
+    constructor(protected callback?: (exec: Execution) => void) {
+        super(callback)
+    }
+
     /**
      * Gets the raw git stash command data.
      *

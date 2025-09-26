@@ -5,15 +5,12 @@
 
 import * as Workspace from '../Workspace'
 import Config from '../Config'
-import Git from './Git'
+import Git, { Execution } from './Git'
 import { Uri } from 'vscode'
 
 export default class WorkspaceGit extends Git {
-    private config: Config
-
-    constructor(config: Config) {
-        super()
-        this.config = config
+    constructor(private config: Config, protected callback?: (exec: Execution) => void) {
+        super(callback)
     }
 
     /**

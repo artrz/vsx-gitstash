@@ -5,10 +5,18 @@
 
 import { Execution as BaseExecution, ExeResult as BaseExeResult, exec } from '../Foundation/Executor'
 
-export type ExeResult = BaseExeResult
 export type Execution = BaseExecution
+export type ExeResult = BaseExeResult
 
 export default class Git {
+    /**
+     * @param callback this will be executed every time exec() gets called.
+        Do not blindly resolve the promise or the execution lifecycle may break!
+     */
+    constructor(
+        protected callback?: (exec: Execution) => void,
+    ) { }
+
     /**
      * Generates an execution object containing the execution promise and the command
      * / arguments.
@@ -20,6 +28,8 @@ export default class Git {
         env?: Record<string, unknown>,
         encoding?: BufferEncoding,
     ): Execution {
-        return exec('git', args, cwd, env, encoding)
+        const ex = exec('git', args, cwd, env, encoding)
+        if (this.callback) { this.callback(ex) }
+        return ex
     }
 }
