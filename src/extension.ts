@@ -3,6 +3,7 @@
  * GPL-3.0-only. See LICENSE.md in the project root for license details.
  */
 
+import './_global'
 import { ConfigurationChangeEvent, ExtensionContext, Uri, WorkspaceFoldersChangeEvent, commands, workspace } from 'vscode'
 import { Commands } from './Commands'
 import BranchGit from './Git/BranchGit'
@@ -146,6 +147,8 @@ export function activate(context: ExtensionContext): void {
     )
 
     treeProvider.toggle()
+
+    global.dbg(`[boot] 🚀 ${channelName} started`)
 }
 
 /**
