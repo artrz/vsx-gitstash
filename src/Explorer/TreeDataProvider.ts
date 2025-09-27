@@ -105,6 +105,7 @@ export default class implements TreeDataProvider<Node> {
         }
 
         if (node instanceof RepositoryNode) {
+            global.dbg(`[explorer] Repo '${node.label}': Loading stashes...`)
             return node.children
                 ? Promise.resolve(this.prepareChildren(node, node.children))
                 : this.nodeContainer.getStashes(node)
@@ -112,6 +113,7 @@ export default class implements TreeDataProvider<Node> {
         }
 
         if (node instanceof StashNode) {
+            global.dbg(`[explorer] Stash '${node.description}': Loading files...`)
             return node.children
                 ? Promise.resolve(this.prepareChildren(node, node.children))
                 : this.nodeContainer.getFiles(node)

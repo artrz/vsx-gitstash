@@ -62,6 +62,7 @@ export default class implements Disposable {
      * @param projectPath the directory path
      */
     private registerProjectWatcher(projectPath: string): void {
+        global.dbg(`[FSWatch] Watch ${projectPath} ...`)
         if (this.watchers.has(projectPath)) {
             return
         }
@@ -95,6 +96,7 @@ export default class implements Disposable {
      */
     private removeProjectWatcher(path: string): void {
         if (this.watchers.has(path)) {
+            global.dbg(`[FSWatch] Stop watching ${path} ...`)
             this.watchers.get(path)?.close()
             this.watchers.delete(path)
         }
