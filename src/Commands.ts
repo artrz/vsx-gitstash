@@ -358,8 +358,8 @@ export class Commands {
             { modal: true },
             { title: 'Yes' },
         )
-            .then((option) => {
-                if (typeof option !== 'undefined') {
+            .then((selection) => {
+                if (selection) {
                     this.stashCommands.applySingle(fileNode)
                 }
             })
@@ -379,8 +379,8 @@ export class Commands {
             { modal: true },
             { title: 'Yes' },
         )
-            .then((option) => {
-                if (typeof option !== 'undefined') {
+            .then((selection) => {
+                if (selection) {
                     this.stashCommands.createSingle(fileNode)
                 }
             })
@@ -577,7 +577,8 @@ export class Commands {
         }
 
         if (!list.length) {
-            return void vscode.window.showInformationMessage(`No branches found in the repository ${repositoryLabel}.`)
+            const msg = `No branches found in the repository ${repositoryLabel}.`
+            return void vscode.window.showInformationMessage(msg)
         }
 
         const options: vscode.QuickPickOptions = {

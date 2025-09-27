@@ -251,6 +251,24 @@ export default class StashGit extends Git {
         return this.exec(params, cwd).promise
     }
 
+    /**
+     * Verifies current state doesn't have any unmerged paths (merge conflicts).
+     */
+    private async noMergeConflicts(cwd: string): Promise<boolean | undefined> {
+        const exec = this.statusP2(cwd)
+        try {
+            const output = (await exec.promise).out
+            return undefined !== output
+                .split('\0')
+                .find((entry) => entry.startsWith('u'))
+        }
+        catch (error) {
+            console.error('StashGit.noMergeConflicts()')
+            console.error(error)
+            return undefined
+        }
+    }
+
     // -------------------------------------------------------------------------
 
     /**
