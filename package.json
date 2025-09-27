@@ -56,7 +56,7 @@
                 },
                 "gitstash.advanced.repositorySearchDepth": {
                     "type": "integer",
-                    "default": 1,
+                    "default": 0,
                     "description": "Search depth for finding repositories on subdirectories. If value is negative parent directory repositories will be searched"
                 },
                 "gitstash.advanced.ignoredDirectories": {
@@ -64,6 +64,7 @@
                     "default": [
                         "__pycache__",
                         ".docker",
+                        ".DS_Store",
                         ".git",
                         ".github",
                         ".local",
