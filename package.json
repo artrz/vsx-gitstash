@@ -49,6 +49,11 @@
             "type": "object",
             "title": "GitStash",
             "properties": {
+                "gitstash.advanced.debugEnabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Enables debug logging to the developer console"
+                },
                 "gitstash.advanced.repositorySearchDepth": {
                     "type": "integer",
                     "default": 1,

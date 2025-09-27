@@ -30,6 +30,7 @@ export function activate(context: ExtensionContext): void {
     const channelName = packJson.displayName
 
     const config = new Config(configPrefix)
+    global.setDebug(config.get<boolean>(config.key.advancedDebugEnabled))
 
     const logChannel = new LogChannel(channelName)
     const gitCallback = (exec: Execution) => {
@@ -139,6 +140,9 @@ export function activate(context: ExtensionContext): void {
         workspace.onDidChangeConfiguration((e: ConfigurationChangeEvent) => {
             if (e.affectsConfiguration('gitstash')) {
                 config.reload()
+
+                global.setDebug(config.get<boolean>(config.key.advancedDebugEnabled))
+
                 treeProvider.reload('settings')
             }
         }),

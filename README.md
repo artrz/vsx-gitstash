@@ -153,6 +153,7 @@ Alternative way to diff the stashed file without its changes.
 | `gitstash.editor.diffTitleFormat`                         | Specifies the format for the diff editor title |
 | `gitstash.log.autoclear`                                  | Clears the log window before showing the action result |
 | `gitstash.notifications.success.show`                     | Shows a notification on a successful execution |
+| `gitstash.advanced.debugEnabled`                          | Enables debug logging to the developer console |
 | `gitstash.advanced.repositorySearchDepth`                 | Search depth for finding repositories on subdirectories |
 | `gitstash.advanced.ignoredDirectories`                    | Directories to ignore when searching in depth |
 

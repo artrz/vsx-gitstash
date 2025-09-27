@@ -99,6 +99,7 @@ export default class implements TreeDataProvider<Node> {
     public getChildren(node?: Node): Thenable<Node[]> | Node[] {
         if (!node) {
             const eagerLoad: boolean = this.config.get('explorer.eagerLoadStashes')
+            global.dbg(`[explorer] Loading root nodes (eagerLoad: ${eagerLoad})...`)
             return this.nodeContainer.getRepositories(eagerLoad)
                 .then((repositories) => this.prepareChildren(undefined, repositories))
         }

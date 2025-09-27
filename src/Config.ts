@@ -9,6 +9,7 @@ export default class Config extends BaseConfig {
     public readonly key = {
         advancedRepoSearchDepth: 'advanced.repositorySearchDepth',
         advancedIgnoredDirectories: 'advanced.ignoredDirectories',
+        advancedDebugEnabled: 'advanced.debugEnabled',
 
         expEnabled: 'explorer.enabled',
         expButtons: 'explorer.buttons',
