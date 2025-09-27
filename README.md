@@ -158,6 +158,11 @@ Alternative way to diff the stashed file without its changes.
 | `gitstash.advanced.ignoredDirectories`                    | Directories to ignore when searching in depth |
 
 
+## Bugs?
+
+If you find a bug, please enable the debug mode just by switching the corresponding setting, this will sent debug messages to the developer console which can give some context when the issue occurs. The more information is provided to reproduce the easier it will be to solve it. You can refer to the [bug-report](https://github.com/artrz/vsx-gitstash/blob/main/.github/ISSUE_TEMPLATE/bug-report.md) template for a guide.
+
+
 ## Tips
 
 - Contrary to the git stash command included in VS Code, with `Stash... - Stash only` you can generate a stash even though all your changes are already added to index.

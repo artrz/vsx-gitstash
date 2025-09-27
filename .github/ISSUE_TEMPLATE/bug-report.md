@@ -7,10 +7,11 @@ assignees: ''
 
 ---
 
+ - [ ] This is happening in the version of the extension.
+ - [ ] I enabled the debug mode while reproducing the issue to get more info.
+
 **Bug description**
 A clear and concise description of what the bug is.
-
- - [ ] I'm using the latest version of the extension.
 
 **How to Reproduce**
 1. Go to '...'
