@@ -9,7 +9,7 @@
                 "--extensionDevelopmentPath=${workspaceFolder}"
             ],
             "env": {
-                "EXT_DEBUG": "0"
+                "EXT_DEBUG": "1"
             },
             "outFiles": [
                 "${workspaceFolder}/dist/**/*.js"
