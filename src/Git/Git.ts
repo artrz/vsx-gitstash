@@ -25,7 +25,7 @@ export default class Git {
     public exec(
         args: string[],
         cwd: string,
-        env?: Record<string, unknown>,
+        env?: Record<string, string | undefined>,
         encoding?: BufferEncoding,
     ): Execution {
         const ex = exec('git', args, cwd, env, encoding)

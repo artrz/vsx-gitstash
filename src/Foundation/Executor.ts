@@ -42,7 +42,7 @@ export function exec(
     command: string,
     args: string[],
     cwd?: string,
-    env?: Record<string, unknown>,
+    env?: Record<string, string | undefined>,
     encoding?: BufferEncoding,
 ): Execution {
     const outBuffer: Buffer[] = []
@@ -52,7 +52,7 @@ export function exec(
     encoding ??= 'utf8'
 
     const startTime = performance.now()
-    const cmd = spawn(command, args, { cwd, env: env as NodeJS.ProcessEnv })
+    const cmd = spawn(command, args, { cwd, env })
 
     return {
         args,
