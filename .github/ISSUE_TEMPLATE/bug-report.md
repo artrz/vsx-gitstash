@@ -7,8 +7,7 @@ assignees: ''
 
 ---
 
- - [ ] This is happening in the version of the extension.
- - [ ] I enabled the debug mode while reproducing the issue to get more info.
+ - [ ] This is happening in the latest version of the extension.
 
 **Bug description**
 A clear and concise description of what the bug is.

@@ -160,7 +160,7 @@ Alternative way to diff the stashed file without its changes.
 
 ## Bugs
 
-If you find a bug, please enable the debug mode just by switching the corresponding setting, this will sent debug messages to the developer console which can give some context when the issue occurs. The more information is provided to reproduce the easier it will be to solve it. You can refer to the [bug-report](https://github.com/artrz/vsx-gitstash/blob/main/.github/ISSUE_TEMPLATE/bug-report.md) template for a guide.
+If something doesn't work correctly, you can take a look to the Git Stash output channel, git execution errors are logged there. There's also a setting to enable the debug mode where information is logged in the developer console while the extension performs some tasks. The more information is provided to reproduce the issue, the easier it will be to solve it.
 
 
 ## Tips
