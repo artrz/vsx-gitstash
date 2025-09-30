@@ -38,24 +38,18 @@ export default class WorkspaceGit extends Git {
 
         const paths: string[] = []
         for (const cwd of Workspace.getRootPaths(depth, ignored)) {
-            try {
-                let gitPath = (await this.exec(params, cwd).promise).out.trim()
-                if (gitPath.length < 1) {
-                    continue
-                }
-
-                gitPath = Uri.file(gitPath).fsPath
-                if (!paths.includes(gitPath)) {
-                    paths.push(gitPath)
-
-                    if (firstOnly) {
-                        break
-                    }
-                }
-            }
-            catch (e) {
-                console.error(e)
+            let gitPath = (await this.exec(params, cwd).promise).out.trim()
+            if (gitPath.length < 1) {
                 continue
+            }
+
+            gitPath = Uri.file(gitPath).fsPath
+            if (!paths.includes(gitPath)) {
+                paths.push(gitPath)
+
+                if (firstOnly) {
+                    break
+                }
             }
         }
 

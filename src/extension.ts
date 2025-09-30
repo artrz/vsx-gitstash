@@ -4,7 +4,7 @@
  */
 
 import './_global'
-import { ConfigurationChangeEvent, ExtensionContext, Uri, WorkspaceFoldersChangeEvent, commands, workspace } from 'vscode'
+import { ConfigurationChangeEvent, ExtensionContext, Uri, WorkspaceFoldersChangeEvent, commands, window, workspace } from 'vscode'
 import { Commands } from './Commands'
 import BranchGit from './Git/BranchGit'
 import Config from './Config'
@@ -34,6 +34,7 @@ export function activate(context: ExtensionContext): void {
 
     const logChannel = new LogChannel(channelName)
     const gitCallback = (exec: Execution) => {
+        // Attach the logger to the git command callback.
         exec.promise = exec.promise
             .then((exeResult) => {
                 if (config.get<boolean>(config.key.logAutoclear)) {
@@ -77,9 +78,17 @@ export function activate(context: ExtensionContext): void {
         branchGit2,
     )
 
+    // Attach and error handler to notify the user if unable to get the repositories.
+    const repos = wsGit2.getRepositories().catch((value: unknown) => {
+        const msg = value instanceof Error ? value.message : JSON.stringify(value)
+        window.showErrorMessage(msg)
+        throw value
+    })
+
     const watcherManager = new FileSystemWatcherManager(
-        wsGit2.getRepositories(),
+        repos,
         (projectDirectory: Uri) => {
+            global.dbg(`[Watch] Reloading explorer (${projectDirectory.fsPath})...`)
             treeProvider.reload('update', projectDirectory)
         },
     )
