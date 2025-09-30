@@ -75,7 +75,7 @@ export default class GitStash extends Git {
                 const tokens = rawStash.split('\n')
                 const index = tokens[0].replace(/\D/g, '') // stash@{\d+}
                 const note = tokens.length >= 8
-                    ? tokens.slice(6).join('\n')
+                    ? tokens.slice(7).join('\n')
                     : undefined
 
                 return {
