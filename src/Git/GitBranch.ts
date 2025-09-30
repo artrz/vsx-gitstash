@@ -5,7 +5,7 @@
 
 import Git, { Execution } from './Git'
 
-export default class BranchGit extends Git {
+export default class GitBranch extends Git {
     constructor(protected callback?: (exec: Execution) => void) {
         super(callback)
     }

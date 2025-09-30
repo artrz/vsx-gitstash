@@ -3,30 +3,29 @@
  * GPL-3.0-only. See LICENSE.md in the project root for license details.
  */
 
-import StashGit, { FileStage, RenameStash, Stash } from '../Git/StashGit'
+import GitStash, { FileStage, RenameStash, Stash } from '../Git/GitStash'
 import { createHash } from 'node:crypto'
 import FileNode from './FileNode'
+import GitWorkspace from '../Git/GitWorkspace'
 import NodeFactory from './NodeFactory'
 import RepositoryNode from './RepositoryNode'
 import StashNode from './StashNode'
-import WorkspaceGit from '../Git/WorkspaceGit'
 
 /**
  * A repository implementation using another name to avoid confusion with git repos.
  */
 export default class NodeContainer {
     constructor(
-        protected workspaceGit: WorkspaceGit,
-        protected stashGit: StashGit,
+        protected gitWorkspace: GitWorkspace,
+        protected gitStash: GitStash,
         protected nodeFactory = new NodeFactory(),
-    ) {
-    }
+    ) { }
 
     /**
      * Gets a hash string representing the current available stashes.
      */
     public async getStateHash(cwd: string): Promise<string | undefined> {
-        const rawStash = await this.stashGit.getRawStashes(cwd)
+        const rawStash = await this.gitStash.getRawStashes(cwd)
         return rawStash
             ? createHash('md5').update(rawStash).digest('hex')
             : undefined
@@ -38,7 +37,7 @@ export default class NodeContainer {
      * @param eagerLoadStashes indicates if children should be preloaded
      */
     public async getRepositories(eagerLoadStashes: boolean): Promise<RepositoryNode[]> {
-        const paths = await this.workspaceGit.getRepositories(false)
+        const paths = await this.gitWorkspace.getRepositories(false)
 
         const repositoryNodes: RepositoryNode[] = []
         for (const repositoryPath of paths) {
@@ -57,7 +56,7 @@ export default class NodeContainer {
      * Gets the stashes list.
      */
     public async getStashes(repositoryNode: RepositoryNode): Promise<StashNode[]> {
-        const stashes = (await this.stashGit.getStashes(repositoryNode.path))
+        const stashes = (await this.gitStash.getStashes(repositoryNode.path))
             .map((stash: Stash) => this.nodeFactory.createStashNode(stash, repositoryNode))
 
         repositoryNode.setChildren(stashes)
@@ -71,7 +70,7 @@ export default class NodeContainer {
      * @param stashNode the parent stash
      */
     public async getFiles(stashNode: StashNode): Promise<FileNode[]> {
-        const stashedFiles = await this.stashGit.getStashedFiles(
+        const stashedFiles = await this.gitStash.getStashedFiles(
             stashNode.path,
             stashNode.index,
             stashNode.parentHashes.length > 2,
@@ -122,36 +121,36 @@ export default class NodeContainer {
      */
     public getFileContents(fileNode: FileNode, stage?: FileStage): Promise<string> {
         if (fileNode.isAdded) {
-            return this.stashGit.getStashContents(
+            return this.gitStash.getStashContents(
                 fileNode.parent.path, fileNode.parent.index, fileNode.relativePath,
             ).then((r) => r.out)
         }
         if (fileNode.isDeleted) {
-            return this.stashGit.getParentContents(
+            return this.gitStash.getParentContents(
                 fileNode.parent.path, fileNode.parent.index, fileNode.relativePath,
             ).then((r) => r.out)
         }
         if (fileNode.isModified) {
             return stage === FileStage.Parent
-                ? this.stashGit.getParentContents(
+                ? this.gitStash.getParentContents(
                     fileNode.parent.path, fileNode.parent.index, fileNode.relativePath,
                 ).then((r) => r.out)
-                : this.stashGit.getStashContents(
+                : this.gitStash.getStashContents(
                     fileNode.parent.path, fileNode.parent.index, fileNode.relativePath,
                 ).then((r) => r.out)
         }
         if (fileNode.isRenamed) {
             return stage === FileStage.Parent
-                ? this.stashGit.getParentContents(
+                ? this.gitStash.getParentContents(
                     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                     fileNode.parent.path, fileNode.parent.index, fileNode.oldRelativePath!,
                 ).then((r) => r.out)
-                : this.stashGit.getStashContents(
+                : this.gitStash.getStashContents(
                     fileNode.parent.path, fileNode.parent.index, fileNode.relativePath,
                 ).then((r) => r.out)
         }
         if (fileNode.isUntracked) {
-            return this.stashGit.getThirdParentContents(
+            return this.gitStash.getThirdParentContents(
                 fileNode.parent.path, fileNode.parent.index, fileNode.relativePath,
             ).then((r) => r.out)
         }

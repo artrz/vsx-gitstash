@@ -34,7 +34,7 @@ export const enum FileStage {
     Parent = 'p',
 }
 
-export default class StashGit extends Git {
+export default class GitStash extends Git {
     constructor(protected callback?: (exec: Execution) => void) {
         super(callback)
     }

@@ -7,23 +7,23 @@ import BaseFileNode from '../../StashNode/FileNode'
 import BaseNodeContainer from '../../StashNode/NodeContainer'
 import DirectoryNode from './DirectoryNode'
 import FileNode from './FileNode'
+import GitStash from '../../Git/GitStash'
+import GitWorkspace from '../../Git/GitWorkspace'
 import MessageNode from './MessageNode'
 import Node from '../../StashNode/Node'
 import NodeFactory from './NodeFactory'
-import StashGit from '../../Git/StashGit'
 import StashNode from '../../StashNode/StashNode'
-import WorkspaceGit from '../../Git/WorkspaceGit'
 
 /**
  * A repository implementation using another name to avoid confusion with git repos.
  */
 export default class NodeContainer extends BaseNodeContainer {
     constructor(
-        protected workspaceGit: WorkspaceGit,
-        protected stashGit: StashGit,
+        protected gitWorkspace: GitWorkspace,
+        protected gitStash: GitStash,
         protected nodeFactory = new NodeFactory(),
     ) {
-        super(workspaceGit, stashGit)
+        super(gitWorkspace, gitStash)
     }
 
     /**

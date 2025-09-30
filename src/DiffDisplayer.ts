@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode'
 import FileNode from './StashNode/FileNode'
-import { FileStage } from './Git/StashGit'
+import { FileStage } from './Git/GitStash'
 import StashLabels from './StashLabels'
 import UriGenerator from './UriGenerator'
 

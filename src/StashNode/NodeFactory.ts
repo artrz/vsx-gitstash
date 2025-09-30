@@ -3,7 +3,7 @@
  * GPL-3.0-only. See LICENSE.md in the project root for license details.
  */
 
-import { RenameStash, Stash } from '../Git/StashGit'
+import { RenameStash, Stash } from '../Git/GitStash'
 import { Uri, workspace } from 'vscode'
 import FileNode from './FileNode'
 import FileNodeType from './FileNodeType'

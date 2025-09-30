@@ -8,7 +8,7 @@ import * as path from 'path'
 import * as tmp from 'tmp'
 import DirectoryNode from './Explorer/TreeNode/DirectoryNode'
 import FileNode from './StashNode/FileNode'
-import { FileStage } from './Git/StashGit'
+import { FileStage } from './Git/GitStash'
 import NodeContainer from './StashNode/NodeContainer'
 import { Uri } from 'vscode'
 

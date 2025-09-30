@@ -4,13 +4,13 @@
  */
 
 import * as vscode from 'vscode'
-import BranchGit from './Git/BranchGit'
 import Config from './Config'
 import FileNode from './StashNode/FileNode'
+import GitBranch from './Git/GitBranch'
+import GitStash from './Git/GitStash'
+import GitWorkspace from './Git/GitWorkspace'
 import RepositoryNode from './StashNode/RepositoryNode'
-import StashGit from './Git/StashGit'
 import StashNode from './StashNode/StashNode'
-import WorkspaceGit from './Git/WorkspaceGit'
 import { Execution } from './Git/Git'
 import { LogChannel } from './LogChannel'
 
@@ -35,9 +35,9 @@ export class StashCommands {
 
     constructor(
         private config: Config,
-        private workspaceGit: WorkspaceGit,
-        private stashGit: StashGit,
-        private branchGit: BranchGit,
+        private gitWorkspace: GitWorkspace,
+        private gitStash: GitStash,
+        private gitBranch: GitBranch,
         private channel: LogChannel,
     ) { }
 
@@ -74,7 +74,7 @@ export class StashCommands {
                 break
         }
 
-        const exec = this.stashGit.stash(repositoryNode.path, params, message)
+        const exec = this.gitStash.stash(repositoryNode.path, params, message)
         this.handleExecution(repositoryNode, exec, 'Stash stored')
     }
 
@@ -86,7 +86,7 @@ export class StashCommands {
      */
     public async push(filePaths: string[], message?: string): Promise<void> {
         const paths: (string | null)[] = filePaths
-        const repositoryPaths = await this.workspaceGit.getRepositories()
+        const repositoryPaths = await this.gitWorkspace.getRepositories()
 
         const repositories: Record<string, string[]> = repositoryPaths
             .sort()
@@ -111,7 +111,7 @@ export class StashCommands {
 
         Object.entries(repositories).forEach(([repoPath, files]) => {
             if (files.length) {
-                const exec = this.stashGit.push(repoPath, files, message)
+                const exec = this.gitStash.push(repoPath, files, message)
                 void exec.promise.then((res) => {
                     console.log('=> push() selected files')
                     console.log(exec.args)
@@ -126,7 +126,7 @@ export class StashCommands {
      */
     public pop(node: RepositoryNode | StashNode, withIndex: boolean): void {
         const index = node instanceof RepositoryNode ? 0 : node.index
-        const exec = this.stashGit.pop(node.path, index, withIndex)
+        const exec = this.gitStash.pop(node.path, index, withIndex)
         this.handleExecution(node, exec, 'Stash popped')
     }
 
@@ -134,7 +134,7 @@ export class StashCommands {
      * Applies a stash.
      */
     public apply(stashNode: StashNode, withIndex: boolean): void {
-        const exec = this.stashGit.apply(stashNode.path, stashNode.index, withIndex)
+        const exec = this.gitStash.apply(stashNode.path, stashNode.index, withIndex)
         this.handleExecution(stashNode, exec, 'Stash applied')
     }
 
@@ -142,7 +142,7 @@ export class StashCommands {
      * Branches a stash.
      */
     public branch(stashNode: StashNode, name: string): void {
-        const exec = this.stashGit.branch(stashNode.path, stashNode.index, name)
+        const exec = this.gitStash.branch(stashNode.path, stashNode.index, name)
         this.handleExecution(stashNode, exec, 'Stash branched')
     }
 
@@ -150,7 +150,7 @@ export class StashCommands {
      * Drops a stash.
      */
     public drop(stashNode: StashNode): void {
-        const exec = this.stashGit.drop(stashNode.path, stashNode.index)
+        const exec = this.gitStash.drop(stashNode.path, stashNode.index)
         this.handleExecution(stashNode, exec, 'Stash dropped')
     }
 
@@ -158,7 +158,7 @@ export class StashCommands {
      * Applies changes from a file.
      */
     public applySingle(fileNode: FileNode): void {
-        const exec = this.stashGit.applySingle(
+        const exec = this.gitStash.applySingle(
             fileNode.parent.path,
             fileNode.parent.index,
             fileNode.relativePath,
@@ -170,7 +170,7 @@ export class StashCommands {
      * Applies changes from a file.
      */
     public createSingle(fileNode: FileNode): void {
-        const exec = this.stashGit.createSingle(
+        const exec = this.gitStash.createSingle(
             fileNode.parent.path,
             fileNode.parent.index,
             fileNode.relativePath,
@@ -182,7 +182,7 @@ export class StashCommands {
      * Removes the stashes list.
      */
     public clear(repositoryNode: RepositoryNode): void {
-        const exec = this.stashGit.clear(repositoryNode.path)
+        const exec = this.gitStash.clear(repositoryNode.path)
         this.handleExecution(repositoryNode, exec, 'Stash list cleared')
     }
 
@@ -190,7 +190,7 @@ export class StashCommands {
      * Checkouts a branch.
      */
     public checkout(repositoryNode: RepositoryNode, branch: string): void {
-        const exec = this.branchGit.checkout(repositoryNode.path, branch)
+        const exec = this.gitBranch.checkout(repositoryNode.path, branch)
         this.handleExecution(repositoryNode, exec, `Switched to branch ${branch}`)
     }
 

@@ -8,7 +8,7 @@ import Config from '../Config'
 import Git, { Execution } from './Git'
 import { Uri } from 'vscode'
 
-export default class WorkspaceGit extends Git {
+export default class GitWorkspace extends Git {
     constructor(private config: Config, protected callback?: (exec: Execution) => void) {
         super(callback)
     }

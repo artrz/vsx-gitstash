@@ -4,14 +4,14 @@
  */
 
 import * as vscode from 'vscode'
-import StashGit, { FileStage } from '../Git/StashGit'
+import GitStash, { FileStage } from '../Git/GitStash'
 import FileNodeType from '../StashNode/FileNodeType'
 
 export default class implements vscode.TextDocumentContentProvider {
     private onDidChangeEmitter = new vscode.EventEmitter<vscode.Uri>()
 
     constructor(
-        private stashGit: StashGit,
+        private gitStash: GitStash,
     ) { }
 
     /**
@@ -40,24 +40,24 @@ export default class implements vscode.TextDocumentContentProvider {
 
         try {
             if (type === FileNodeType.Added) {
-                contents = (await this.stashGit.getStashContents(cwd, index, path)).out
+                contents = (await this.gitStash.getStashContents(cwd, index, path)).out
             }
             else if (type === FileNodeType.Deleted) {
-                contents = (await this.stashGit.getParentContents(cwd, index, path)).out
+                contents = (await this.gitStash.getParentContents(cwd, index, path)).out
             }
             else if (type === FileNodeType.Modified) {
                 contents = side === FileStage.Parent
-                    ? (await this.stashGit.getParentContents(cwd, index, path)).out
-                    : (await this.stashGit.getStashContents(cwd, index, path)).out
+                    ? (await this.gitStash.getParentContents(cwd, index, path)).out
+                    : (await this.gitStash.getStashContents(cwd, index, path)).out
             }
             else if (type === FileNodeType.Renamed) {
                 contents = side === FileStage.Parent
-                    ? (await this.stashGit.getParentContents(cwd, index, oldPath)).out
-                    : (await this.stashGit.getStashContents(cwd, index, path)).out
+                    ? (await this.gitStash.getParentContents(cwd, index, oldPath)).out
+                    : (await this.gitStash.getStashContents(cwd, index, path)).out
             }
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             else if (type === FileNodeType.Untracked) {
-                contents = (await this.stashGit.getThirdParentContents(cwd, index, path)).out
+                contents = (await this.gitStash.getThirdParentContents(cwd, index, path)).out
             }
             else {
                 console.warn(`provideTextDocumentContent type[${params.type}] side[${side}]`)

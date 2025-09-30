@@ -5,10 +5,10 @@
 
 import * as fs from 'fs'
 import * as vscode from 'vscode'
-import BranchGit from './Git/BranchGit'
+import GitBranch from './Git/GitBranch'
 import DiffDisplayer, { DiffSide } from './DiffDisplayer'
 import FileNode from './StashNode/FileNode'
-import { FileStage } from './Git/StashGit'
+import { FileStage } from './Git/GitStash'
 import Node from './StashNode/Node'
 import NodeContainer from './StashNode/NodeContainer'
 import RepositoryNode from './StashNode/RepositoryNode'
@@ -32,7 +32,7 @@ export class Commands {
         private stashCommands: StashCommands,
         private displayer: DiffDisplayer,
         private stashLabels: StashLabels,
-        private branchGit: BranchGit,
+        private gitBranch: GitBranch,
     ) {
     }
 
@@ -401,7 +401,7 @@ export class Commands {
         )
 
         try {
-            this.previousBranch = await this.branchGit.currentBranch(repositoryNode.path)
+            this.previousBranch = await this.gitBranch.currentBranch(repositoryNode.path)
         }
         catch { /* empty */ }
 
@@ -569,10 +569,10 @@ export class Commands {
         if (!repositoryNode) { return }
 
         const repositoryLabel = this.stashLabels.getName(repositoryNode)
-        let list = await this.branchGit.getBranches(repositoryNode.path)
+        let list = await this.gitBranch.getBranches(repositoryNode.path)
 
         if (filterCurrent) {
-            const current = await this.branchGit.currentBranch(repositoryNode.path)
+            const current = await this.gitBranch.currentBranch(repositoryNode.path)
             list = list.filter((branch) => branch !== current)
         }
 
