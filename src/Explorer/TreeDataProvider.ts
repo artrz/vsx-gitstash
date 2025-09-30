@@ -249,6 +249,6 @@ export default class implements TreeDataProvider<Node> {
 
             console.error(`TreeDataProvider.reload() with type '${type}' requires a defined pathUri argument`)
             throw new Error('TreeDataProvider.reload()')
-        }, type === 'force' ? 250 : 750, type, projectPath)
+        }, type === 'force' ? 275 : 752, type, projectPath)
     }
 }
