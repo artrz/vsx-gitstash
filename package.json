@@ -829,7 +829,7 @@
         "esbuild": "^0.25.10",
         "eslint": "^9.36.0",
         "lefthook": "^1.13.2",
-        "typescript": "~5.8.3",
+        "typescript": "~5.9.3",
         "typescript-eslint": "^8.44.1"
     }
 }
