@@ -11,6 +11,7 @@ import DiffDisplayer from './DiffDisplayer'
 import DocumentContentProvider from './Document/DocumentContentProvider'
 import FileNode from './StashNode/FileNode'
 import FileSystemWatcherManager from './FileSystemWatcherManager'
+import Git from './Git/Git'
 import GitBranch from './Git/GitBranch'
 import GitStash from './Git/GitStash'
 import GitWorkspace from './Git/GitWorkspace'
@@ -18,21 +19,32 @@ import NodeContainer from './Explorer/TreeNode/NodeContainer'
 import { Execution } from './Foundation/Executor'
 import { LogChannel } from './LogChannel'
 import { StashCommands } from './StashCommands'
+import { compareVersions } from './Foundation/semver'
 import StashLabels from './StashLabels'
 import TreeDataProvider from './Explorer/TreeDataProvider'
 import TreeDecorationProvider from './Explorer/TreeDecorationProvider'
 import UriGenerator from './UriGenerator'
 
-export function activate(context: ExtensionContext): void {
+export async function activate(context: ExtensionContext): Promise<void> {
+    // Get data from the package file.
     const packJson = context.extension.packageJSON as { name: string, displayName: string }
-
     const configPrefix = packJson.name
     const channelName = packJson.displayName
 
+    // Configure debug mode.
     const config = new Config(configPrefix)
     global.setDebug(config.get<boolean>(config.key.advancedDebugEnabled))
 
     const logChannel = new LogChannel(channelName)
+
+    // Get the installed git version.
+    const gitVersion = await (new Git()).version()
+    await commands.executeCommand('setContext', 'gitVersion', gitVersion)
+    global.dbg(`[boot] git version: ${gitVersion}`)
+    if (compareVersions(gitVersion, '2.35.0') === 1) {
+        logChannel.appendLine(`⚠️ Stashing staged files only requires git 2.35.0+, current version: ${gitVersion}`)
+    }
+
     const gitCallback = (exec: Execution) => {
         // Attach the logger to the git command callback.
         exec.promise = exec.promise
@@ -88,7 +100,7 @@ export function activate(context: ExtensionContext): void {
     const watcherManager = new FileSystemWatcherManager(
         repos,
         (projectDirectory: Uri) => {
-            global.dbg(`[Watch] Reloading explorer (${projectDirectory.fsPath})...`)
+            global.dbg(`[watch] Reloading explorer (${projectDirectory.fsPath})...`)
             treeProvider.reload('update', projectDirectory)
         },
     )
@@ -113,7 +125,7 @@ export function activate(context: ExtensionContext): void {
         commands.registerCommand('gitstash.clear', stashCommands.clear),
         commands.registerCommand('gitstash.openDir', stashCommands.openDir),
 
-        commands.registerCommand('gitstash.show', stashCommands.show),
+        commands.registerCommand('gitstash.show', stashCommands.diff),
         commands.registerCommand('gitstash.diffChangesCurrent', (node: FileNode) => { treeProvider.focus(node); stashCommands.diffChangesCurrent(node) }),
         commands.registerCommand('gitstash.diffCurrentChanges', (node: FileNode) => { treeProvider.focus(node); stashCommands.diffCurrentChanges(node) }),
         commands.registerCommand('gitstash.diffSourceCurrent', (node: FileNode) => { treeProvider.focus(node); stashCommands.diffSourceCurrent(node) }),
@@ -164,7 +176,7 @@ export function activate(context: ExtensionContext): void {
 }
 
 /**
- * Checks if there is at least one git repository open and notifies it to vsc.
+ * Checks if there is at least one git repository open and notifies it to the host.
  */
 function notifyHasRepository(gitWorkspace: GitWorkspace) {
     void gitWorkspace

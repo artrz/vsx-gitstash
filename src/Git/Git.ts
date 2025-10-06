@@ -24,12 +24,26 @@ export default class Git {
      */
     public exec(
         args: string[],
-        cwd: string,
+        cwd?: string,
         env?: Record<string, string | undefined>,
         encoding?: BufferEncoding,
     ): Execution {
         const ex = exec('git', args, cwd, env, encoding)
         if (this.callback) { this.callback(ex) }
         return ex
+    }
+
+    /**
+     * Gets the current git (semver) version.
+     */
+    public async version(): Promise<string> {
+        const params = [
+            'version',
+        ]
+
+        const versionString = (await this.exec(params).promise).out.trim()
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const tokens = /.+ (\d+\.\d+\.\d+).*/.exec(versionString)!
+        return tokens[1]
     }
 }

@@ -71,6 +71,9 @@ export default class FileNode extends Node {
             : undefined
     }
 
+    /**
+     * @see FileNode.subPath()
+     */
     get oldSubPath(): string | undefined {
         return this._oldSubPath
     }

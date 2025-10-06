@@ -63,7 +63,7 @@ export class Commands {
      *
      * @param fileNode the involved node
      */
-    public show = (fileNode: FileNode): void => void this.displayer.showDiff(fileNode)
+    public diff = (fileNode: FileNode): void => void this.displayer.showDiff(fileNode)
 
     /**
      * Shows a diff document comparing the modified stashed file (left side)
