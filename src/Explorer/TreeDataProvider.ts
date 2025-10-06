@@ -213,7 +213,7 @@ export default class implements TreeDataProvider<Node> {
      * @see TreeView.reveal()
      */
     public focus(element: Node): void {
-        this.view.reveal(element, { select: true, focus: true })
+        this.view.reveal(element, { select: true, focus: false })
     }
 
     /**
