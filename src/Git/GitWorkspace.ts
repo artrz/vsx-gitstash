@@ -5,6 +5,7 @@
 
 import * as Workspace from '../Workspace'
 import Config from '../Config'
+import ExecError from '../Foundation/ExecError'
 import Git, { Execution } from './Git'
 import { Uri } from 'vscode'
 
@@ -38,8 +39,14 @@ export default class GitWorkspace extends Git {
 
         const paths: string[] = []
         for (const cwd of Workspace.getRootPaths(depth, ignored)) {
-            let gitPath = (await this.exec(params, cwd).promise).out.trim()
-            if (gitPath.length < 1) {
+            let gitPath: string | undefined
+            try { gitPath = (await this.exec(params, cwd).promise).out.trim() }
+            catch (error: unknown) {
+                if (!(error instanceof ExecError) || error.code !== 128) { throw error }
+                // 128 = fatal: not a git repository (or any of the parent directories): .git
+            }
+
+            if (!gitPath) {
                 continue
             }
 

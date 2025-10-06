@@ -14,7 +14,7 @@ const _global = (typeof window !== 'undefined' ? window /* browser */ : global /
 _global.debug = process.env.EXT_DEBUG === '1'
 
 _global.setDebug = (state: boolean) => {
-    // When setting debug mode, we always give env flag precedence.
+    // When setting debug mode, we always give precedence to the env flag.
     _global.debug = process.env.EXT_DEBUG === '1' || state
 }
 

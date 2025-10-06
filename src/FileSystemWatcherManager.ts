@@ -17,17 +17,12 @@ export default class implements Disposable {
     /**
      * Creates a new watcher.
      *
-     * @param repositories the open repositories when starting the extension
-     * @param callback     the callback to run when identifying changes
+     * @param repos    the repositories to watch
+     * @param callback the callback to run when detecting changes
      */
-    constructor(repositories: Promise<string[]>, callback: CallbackFunction) {
+    constructor(repos: string[], callback: CallbackFunction) {
         this.callback = callback
-
-        void repositories.then((directories) => {
-            directories.forEach((directory) => {
-                this.registerProjectWatcher(directory)
-            })
-        })
+        repos.forEach((directory) => { this.registerProjectWatcher(directory) })
     }
 
     /**

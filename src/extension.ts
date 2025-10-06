@@ -90,12 +90,14 @@ export async function activate(context: ExtensionContext): Promise<void> {
         branchGit2,
     )
 
-    // Attach and error handler to notify the user if unable to get the repositories.
-    const repos = wsGit2.getRepositories().catch((value: unknown) => {
-        const msg = value instanceof Error ? value.message : JSON.stringify(value)
+    let repos = []
+    try { repos = await wsGit2.getRepositories() }
+    catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : JSON.stringify(err)
         window.showErrorMessage(msg)
-        throw value
-    })
+        console.log(err)
+        return
+    }
 
     const watcherManager = new FileSystemWatcherManager(
         repos,
