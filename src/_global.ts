@@ -1,4 +1,11 @@
+/*
+ * Copyright (c) Arturo Rodríguez V.
+ * GPL-3.0-only. See LICENSE.md in the project root for license details.
+ */
+
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
+import { toDateTimeIso } from './DateFormat'
 
 // typeof doesn't evaluate "window", only tries to get its type.
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
@@ -13,6 +20,6 @@ _global.setDebug = (state: boolean) => {
 
 _global.dbg = (...args: never[]) => {
     if (global.debug) {
-        console.log('▓', ...args)
+        console.log('▓', toDateTimeIso(new Date(), false, true), ...args)
     }
 }

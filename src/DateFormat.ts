@@ -3,8 +3,11 @@
  * GPL-3.0-only. See LICENSE.md in the project root for license details.
  */
 
-export function toDateTimeIso(date: Date): string {
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())} ${getOffset(date)}`
+export function toDateTimeIso(date: Date, includeOffset = true, includeMillis = false): string {
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+        + ` ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
+        + (includeMillis ? `.${date.getMilliseconds()}` : '')
+        + (includeOffset ? ` ${getOffset(date)}` : '')
 }
 
 export function toDateIso(date: Date): string {

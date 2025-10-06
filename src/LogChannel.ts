@@ -15,7 +15,7 @@ export class LogChannel {
     }
 
     public logExeResult(args: string[], exeResult: ExeResult) {
-        const currentTime = toDateTimeIso(new Date()).substring(0, 19)
+        const currentTime = toDateTimeIso(new Date(), false, true)
         const cmd = `git ${args.join(' ')}`
 
         this.appendLine(`${currentTime} > ${cmd} [${exeResult.time}ms]`)
@@ -23,7 +23,7 @@ export class LogChannel {
     }
 
     public logExeError(args: string[], error: unknown) {
-        const currentTime = toDateTimeIso(new Date()).substring(0, 19)
+        const currentTime = toDateTimeIso(new Date(), false, true)
         const cmd = `git ${args.join(' ')}`
 
         const err = error instanceof Error ? error.message : JSON.stringify(error)
