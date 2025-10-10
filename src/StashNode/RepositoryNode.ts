@@ -4,7 +4,6 @@
  */
 
 import Node from './Node'
-import * as path from 'path'
 import StashNode from './StashNode'
 
 export default class RepositoryNode extends Node {
@@ -23,7 +22,7 @@ export default class RepositoryNode extends Node {
      * `/path/to/repository`
      */
     get path(): string {
-        return `${this.basePath}${path.sep}${this.dirName}`
+        return `${this.basePath}/${this.dirName}`
     }
 
     /**

@@ -3,7 +3,6 @@
  * GPL-3.0-only. See LICENSE.md in the project root for license details.
  */
 
-import * as path from 'path'
 import FileNodeType from './FileNodeType'
 import Node from './Node'
 import StashNode from './StashNode'
@@ -33,7 +32,7 @@ export default class FileNode extends Node {
      * The absolute path of the stashed file.
      */
     get path(): string {
-        return `${this.parent.path}${path.sep}${this.relativePath}`
+        return `${this.parent.path}/${this.relativePath}`
     }
 
     /**
@@ -41,11 +40,13 @@ export default class FileNode extends Node {
      * /path/to/repository/`sub/path/file.ext`
      */
     get relativePath(): string {
-        return path.normalize(`${this.subPath}${path.sep}${this.fileName}`)
+        return this.subPath !== '.'
+            ? `${this.subPath}/${this.fileName}`
+            : this.fileName
     }
 
     /**
-     * The relative base path, i.e. relative path without last directory. May be '.'.
+     * The relative base path, i.e. relative path without filename. May be '.'.
      * /path/to/repository/`sub/path`/file.ext
      */
     get subPath(): string {
@@ -58,7 +59,7 @@ export default class FileNode extends Node {
 
     get oldPath(): string | undefined {
         return this.oldRelativePath
-            ? `${this.parent.path}${path.sep}${this.oldRelativePath}`
+            ? `${this.parent.path}/${this.oldRelativePath}`
             : undefined
     }
 
@@ -66,8 +67,9 @@ export default class FileNode extends Node {
      * @see FileNode.relativePath()
      */
     get oldRelativePath(): string | undefined {
-        return this.oldFileName
-            ? path.normalize(`${this.oldSubPath}${path.sep}${this.oldFileName}`)
+        if (!this.oldFileName) { return undefined }
+        return this.oldRelativePath
+            ? `${this.oldSubPath}/${this.oldFileName}`
             : undefined
     }
 
