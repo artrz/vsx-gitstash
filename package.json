@@ -819,17 +819,17 @@
         "@favware/cliff-jumper": "^6.0.0",
         "@stylistic/eslint-plugin": "^5.4.0",
         "@types/mocha": "^10.0.10",
-        "@types/node": "~22.17.2",
+        "@types/node": "~22.18.9",
         "@types/tmp": "0.2.6",
         "@types/vscode": "~1.70.0",
-        "@typescript-eslint/eslint-plugin": "^8.45.0",
-        "@typescript-eslint/parser": "^8.45.0",
-        "@vscode/test-cli": "^0.0.11",
+        "@typescript-eslint/eslint-plugin": "^8.46.0",
+        "@typescript-eslint/parser": "^8.46.0",
+        "@vscode/test-cli": "^0.0.12",
         "@vscode/test-electron": "^2.5.2",
         "esbuild": "^0.25.10",
         "eslint": "^9.37.0",
         "lefthook": "^1.13.6",
-        "typescript": "~5.8.3",
-        "typescript-eslint": "^8.45.0"
+        "typescript": "^5.9.3",
+        "typescript-eslint": "^8.46.0"
     }
 }
