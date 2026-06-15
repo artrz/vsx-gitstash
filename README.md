@@ -155,6 +155,7 @@ Alternative way to diff the stashed file without its changes.
 | `gitstash.notifications.success.show`                     | Shows a notification on a successful execution |
 | `gitstash.advanced.debugEnabled`                          | Enables debug logging to the developer console |
 | `gitstash.advanced.repositorySearchDepth`                 | Search depth for finding repositories on subdirectories |
+| `gitstash.advanced.includeSubmodules`                     | Lists stashes from git submodules nested under the workspace repositories |
 | `gitstash.advanced.ignoredDirectories`                    | Directories to ignore when searching in depth |
 
 
