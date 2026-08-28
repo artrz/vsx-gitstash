@@ -13,6 +13,7 @@ import FileNode from './StashNode/FileNode'
 import FileSystemWatcherManager from './FileSystemWatcherManager'
 import Git from './Git/Git'
 import GitBranch from './Git/GitBranch'
+import GitRepositorySelection from './Git/GitRepositorySelection'
 import GitStash from './Git/GitStash'
 import GitWorkspace from './Git/GitWorkspace'
 import NodeContainer from './Explorer/TreeNode/NodeContainer'
@@ -61,8 +62,9 @@ export async function activate(context: ExtensionContext): Promise<void> {
             })
     }
 
-    const wsGit = new GitWorkspace(config, gitCallback)
-    const wsGit2 = new GitWorkspace(config, gitCallback)
+    const gitRepositorySelection = await GitRepositorySelection.create()
+    const wsGit = new GitWorkspace(config, gitCallback, gitRepositorySelection)
+    const wsGit2 = new GitWorkspace(config, gitCallback, gitRepositorySelection)
     const stashGit = new GitStash(gitCallback)
     const stashGit2 = new GitStash(gitCallback)
     const stashGit3 = new GitStash(gitCallback)
@@ -88,6 +90,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
         new DiffDisplayer(uriGenerator, stashLabels),
         stashLabels,
         branchGit2,
+        gitRepositorySelection,
     )
 
     let repos = []
@@ -171,6 +174,10 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
         watcherManager,
     )
+
+    if (gitRepositorySelection) {
+        context.subscriptions.push(gitRepositorySelection)
+    }
 
     treeProvider.toggle()
 
