@@ -7,10 +7,15 @@ import * as Workspace from '../Workspace'
 import Config from '../Config'
 import ExecError from '../Foundation/ExecError'
 import Git, { Execution } from './Git'
+import GitRepositorySelection from './GitRepositorySelection'
 import { Uri } from 'vscode'
 
 export default class GitWorkspace extends Git {
-    constructor(private config: Config, protected callback?: (exec: Execution) => void) {
+    constructor(
+        private config: Config,
+        protected callback?: (exec: Execution) => void,
+        private gitRepositorySelection?: GitRepositorySelection,
+    ) {
         super(callback)
     }
 
@@ -37,7 +42,11 @@ export default class GitWorkspace extends Git {
             '--show-toplevel',
         ]
 
-        const paths: string[] = []
+        const paths = this.gitRepositorySelection?.getRepositoryPaths() ?? []
+        if (firstOnly && paths.length) {
+            return paths.slice(0, 1)
+        }
+
         for (const cwd of Workspace.getRootPaths(depth, ignored)) {
             let gitPath: string | undefined
             try { gitPath = (await this.exec(params, cwd).promise).out.trim() }

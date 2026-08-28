@@ -4,7 +4,7 @@
  */
 
 import { RenameStash, Stash } from '../Git/GitStash'
-import { Uri, workspace } from 'vscode'
+import { Uri, workspace, WorkspaceFolder } from 'vscode'
 import FileNode from './FileNode'
 import FileNodeType from './FileNodeType'
 import RepositoryNode from './RepositoryNode'
@@ -21,11 +21,12 @@ export default class NodeFactory {
         // May be undefined if the directory is not part of the workspace,
         // this happens on upper directories by negative search depth setting.
         const wsFolder = workspace.getWorkspaceFolder(Uri.file(path))
+        const label = getWorkspaceFolderLabel(path, wsFolder)
 
         return new RepositoryNode(
             dirname(path),
             basename(path),
-            wsFolder?.name,
+            label,
         )
     }
 
@@ -126,4 +127,18 @@ export default class NodeFactory {
             basename(fileSubpath),
         )
     }
+}
+
+/**
+ * Uses a workspace folder's custom name only when it is the repository root.
+ */
+export function getWorkspaceFolderLabel(
+    repositoryPath: string,
+    workspaceFolder?: WorkspaceFolder,
+): string | undefined {
+    // A nested repository belongs to the containing workspace folder, but
+    // its label must remain its own directory name.
+    return workspaceFolder?.uri.fsPath === repositoryPath
+        ? workspaceFolder.name
+        : undefined
 }
