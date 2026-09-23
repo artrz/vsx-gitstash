@@ -1,7 +1,5 @@
 {
     "$schema": "./node_modules/@favware/cliff-jumper/assets/cliff-jumper.schema.json",
-    "gitRepo": "auto",
-    "gitToken": "none",
     "install": true,
     "name": "vsx-gitstash",
     "org": "artrz",

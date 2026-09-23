@@ -13,7 +13,7 @@ const style = stylistic.configs.customize({
     quoteProps: 'consistent-as-needed',
 })
 
-export default tseslint.config(
+export default [
     {
         ignores: [
             'out',
@@ -39,7 +39,6 @@ export default tseslint.config(
         rules: {
             'curly': 'error',
             'eqeqeq': 'error',
-            'no-throw-literal': 'error',
             ...style.rules,
             '@typescript-eslint/prefer-string-starts-ends-with': ['warn'],
             '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
@@ -59,4 +58,4 @@ export default tseslint.config(
             '@typescript-eslint/no-require-imports': 'off',
         },
     },
-)
+]

@@ -7,6 +7,10 @@
         "rootDir": "src",
         "sourceMap": true,
         "strict": true,
+        "types": [
+            "node",
+            "mocha"
+        ]
     },
     "exclude": [
         "node_modules",

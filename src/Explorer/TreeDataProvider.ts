@@ -66,7 +66,7 @@ export default class implements TreeDataProvider<Node> {
      */
     public toggle = (): void => {
         this.showExplorer = this.showExplorer === undefined
-            ? this.config.get('explorer.enabled')
+            ? this.config.get(this.config.key.expEnabled)
             : !this.showExplorer
 
         void commands.executeCommand(

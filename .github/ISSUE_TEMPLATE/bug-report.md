@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
- - [ ] This is happening in the latest version of the extension.
+ - Version where the bug appeared: vx.x.x
 
 **Bug description**
 A clear and concise description of what the bug is.

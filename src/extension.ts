@@ -90,7 +90,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
         branchGit2,
     )
 
-    let repos = []
+    let repos = [] // eslint-disable-line no-useless-assignment -- false positive when linting
     try { repos = await wsGit2.getRepositories() }
     catch (err: unknown) {
         const msg = err instanceof Error ? err.message : JSON.stringify(err)

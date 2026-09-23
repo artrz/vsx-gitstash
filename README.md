@@ -2,15 +2,10 @@
 
 > Seamlessly integration of git stash functionalities into your editor.
 
-[![Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/arturock.gitstash?color=f2266e&label=VS%20Marketplace)](https://marketplace.visualstudio.com/items?itemName=arturock.gitstash)
-[![Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/arturock.gitstash?color=f2266e)](https://marketplace.visualstudio.com/items?itemName=arturock.gitstash)
-[![Marketplace Rating](https://img.shields.io/visual-studio-marketplace/stars/arturock.gitstash?color=f2266e)](https://marketplace.visualstudio.com/items?itemName=arturock.gitstash)
-<br>
+[![Marketplace Version](https://img.shields.io/github/v/release/artrz/vsx-gitstash?color=f2266e&label=VS%20Marketplace)](https://github.com/artrz/vsx-gitstash/releases/latest)
 [![OpenVSX Version](https://img.shields.io/open-vsx/v/arturock/gitstash?color=c160ef&label=Open%20VSX)](https://open-vsx.org/extension/arturock/gitstash)
-[![OpenVSX Downloads](https://img.shields.io/open-vsx/dt/arturock/gitstash?color=c160ef)](https://open-vsx.org/extension/arturock/gitstash)
-[![OpenVSX rating](https://img.shields.io/open-vsx/stars/arturock/gitstash?color=c160ef)](https://open-vsx.org/extension/arturock/gitstash)
-<br>
 [![GitHub Release](https://img.shields.io/github/v/release/artrz/vsx-gitstash?color=08872B&label=GitHub%20Release)](https://github.com/artrz/vsx-gitstash/releases/latest)
+<br>
 [![Release](https://github.com/artrz/vsx-gitstash/actions/workflows/release-version.yml/badge.svg)](https://github.com/artrz/vsx-gitstash/actions/workflows/release-version.yml)
 
 [![Sponsoring](https://img.shields.io/badge/-black?style=social&logo=&label=☕%20%20%20Buy%20me%20a%20Coffee)](https://ko-fi.com/artrz)
