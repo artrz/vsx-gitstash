@@ -43,7 +43,19 @@ export default class GitWorkspace extends Git {
             try { gitPath = (await this.exec(params, cwd).promise).out.trim() }
             catch (error: unknown) {
                 if (!(error instanceof ExecError) || error.code !== 128) { throw error }
-                // 128 = fatal: not a git repository (or any of the parent directories): .git
+
+                if (error.stderr.includes('dubious ownership')) {
+                    try {
+                        const safeParams = ['-c', `safe.directory=${cwd}`, ...params]
+                        gitPath = (await this.exec(safeParams, cwd).promise).out.trim()
+                        if (gitPath) {
+                            Git.addSafeDirectoryPath(Uri.file(gitPath).fsPath)
+                        }
+                        global.dbg(`[repo] Dubious ownership detected for '${cwd}', resolved with safe.directory`)
+                    }
+                    catch { /* still not a valid repo, skip */ }
+                }
+                // else: not a git repository, skip
             }
 
             if (!gitPath) {

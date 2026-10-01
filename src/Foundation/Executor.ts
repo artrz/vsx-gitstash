@@ -48,11 +48,10 @@ export function exec(
     const outBuffer: Buffer[] = []
     const errBuffer: Buffer[] = []
     let error: Error | undefined
-    env ??= {}
     encoding ??= 'utf8'
 
     const startTime = performance.now()
-    const cmd = spawn(command, args, { cwd, env })
+    const cmd = spawn(command, args, { cwd, env: { ...process.env, ...env } })
 
     return {
         args,

@@ -9,6 +9,12 @@ export type Execution = BaseExecution
 export type ExeResult = BaseExeResult
 
 export default class Git {
+    private static safeDirectoryPaths = new Set<string>()
+
+    static addSafeDirectoryPath(path: string): void {
+        Git.safeDirectoryPaths.add(path)
+    }
+
     /**
      * @param callback this will be executed every time exec() gets called.
         Do not blindly resolve the promise or the execution lifecycle may break!
@@ -28,7 +34,11 @@ export default class Git {
         env?: Record<string, string | undefined>,
         encoding?: BufferEncoding,
     ): Execution {
-        const ex = exec('git', args, cwd, env, encoding)
+        let execArgs = args
+        if (cwd && Git.safeDirectoryPaths.has(cwd)) {
+            execArgs = ['-c', `safe.directory=${cwd}`, ...args]
+        }
+        const ex = exec('git', execArgs, cwd, env, encoding)
         if (this.callback) { this.callback(ex) }
         return ex
     }
