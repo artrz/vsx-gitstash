@@ -8,6 +8,7 @@ import BaseConfig from './Foundation/Config'
 export default class Config extends BaseConfig {
     public readonly key = {
         advancedRepoSearchDepth: 'advanced.repositorySearchDepth',
+        advancedIncludeSubmodules: 'advanced.includeSubmodules',
         advancedIgnoredDirectories: 'advanced.ignoredDirectories',
         advancedDebugEnabled: 'advanced.debugEnabled',
 

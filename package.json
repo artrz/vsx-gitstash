@@ -59,6 +59,11 @@
                     "default": 0,
                     "description": "Search depth for finding repositories on subdirectories. If value is negative parent directory repositories will be searched"
                 },
+                "gitstash.advanced.includeSubmodules": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "List stashes from git submodules nested under the workspace repositories. Uninitialized submodules are skipped."
+                },
                 "gitstash.advanced.ignoredDirectories": {
                     "type": "string[]",
                     "default": [

@@ -9,7 +9,7 @@ import FileNode from './FileNode'
 import FileNodeType from './FileNodeType'
 import RepositoryNode from './RepositoryNode'
 import StashNode from './StashNode'
-import { basename, dirname } from 'path'
+import { basename, dirname, relative, sep } from 'path'
 
 export default class NodeFactory {
     /**
@@ -22,10 +22,21 @@ export default class NodeFactory {
         // this happens on upper directories by negative search depth setting.
         const wsFolder = workspace.getWorkspaceFolder(Uri.file(path))
 
+        // Use the workspace folder name only for the folder root itself. Nested
+        // repositories (submodules, or repos found via search depth) share the
+        // same workspace folder, so labelling them with its name would make them
+        // indistinguishable; fall back to their path relative to the folder.
+        let label: string | undefined
+        if (wsFolder) {
+            label = wsFolder.uri.fsPath === Uri.file(path).fsPath
+                ? wsFolder.name
+                : relative(wsFolder.uri.fsPath, path).split(sep).join('/')
+        }
+
         return new RepositoryNode(
             dirname(path),
             basename(path),
-            wsFolder?.name,
+            label,
         )
     }
 

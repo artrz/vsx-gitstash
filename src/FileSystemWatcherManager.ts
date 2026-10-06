@@ -4,8 +4,8 @@
  */
 
 import { Disposable, Uri, WorkspaceFolder, WorkspaceFoldersChangeEvent, window } from 'vscode'
-import { FSWatcher, existsSync, watch } from 'fs'
-import { join } from 'path'
+import { FSWatcher, existsSync, readFileSync, statSync, watch } from 'fs'
+import { isAbsolute, join, resolve } from 'path'
 
 type CallbackFunction = (event: Uri) => void
 
@@ -62,9 +62,9 @@ export default class implements Disposable {
             return
         }
 
-        const pathToMonitor = join(projectPath, '.git', 'refs')
+        const pathToMonitor = this.resolveRefsDir(projectPath)
 
-        if (!existsSync(pathToMonitor)) {
+        if (!pathToMonitor) {
             return
         }
 
@@ -82,6 +82,38 @@ export default class implements Disposable {
             void window.showErrorMessage(`Unable to a create a stashes monitor for
             ${projectPath}. This may happen on NFS or if the path is a link`)
         }
+    }
+
+    /**
+     * Resolves the `refs` directory to monitor for the given repository.
+     *
+     * For a regular repository this is `<project>/.git/refs`. For submodules
+     * and linked worktrees `.git` is a file pointing to the real git directory
+     * (`gitdir: <path>`), so the refs live under that resolved directory
+     * instead.
+     *
+     * @param projectPath the repository working directory
+     */
+    private resolveRefsDir(projectPath: string): string | undefined {
+        const dotGit = join(projectPath, '.git')
+
+        if (!existsSync(dotGit)) {
+            return undefined
+        }
+
+        let gitDir = dotGit
+        if (statSync(dotGit).isFile()) {
+            const match = /^gitdir:\s*(.+)$/m.exec(readFileSync(dotGit, 'utf8'))
+            if (!match) {
+                return undefined
+            }
+            const target = match[1].trim()
+            gitDir = isAbsolute(target) ? target : resolve(projectPath, target)
+        }
+
+        const refsDir = join(gitDir, 'refs')
+
+        return existsSync(refsDir) ? refsDir : undefined
     }
 
     /**
