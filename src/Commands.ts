@@ -6,6 +6,7 @@
 import * as fs from 'fs'
 import * as vscode from 'vscode'
 import GitBranch from './Git/GitBranch'
+import GitRepositorySelection from './Git/GitRepositorySelection'
 import DiffDisplayer, { DiffSide } from './DiffDisplayer'
 import FileNode from './StashNode/FileNode'
 import { FileStage } from './Git/GitStash'
@@ -33,6 +34,7 @@ export class Commands {
         private displayer: DiffDisplayer,
         private stashLabels: StashLabels,
         private gitBranch: GitBranch,
+        private gitRepositorySelection?: GitRepositorySelection,
     ) {
     }
 
@@ -464,8 +466,10 @@ export class Commands {
     /**
      * Picks a Repository using the following order:
      * 1. If there's only one, return it.
-     * 2. If there's a file open, return the repository that owns it.
-     * 3. Show a picker so user selects one.
+     * 2. If exactly one repository is selected in Source Control, return it.
+     * 3. If multiple repositories are selected in Source Control, let the user choose among them.
+     * 4. If there's a file open, return the repository that owns it.
+     * 5. Show a picker so user selects one.
      */
     private pickRepository = async (
         pickerPlaceholder: string,
@@ -480,6 +484,15 @@ export class Commands {
             return nodes[0]
         }
 
+        const selectedNodes = nodes.filter((node) => this.gitRepositorySelection?.isSelected(node.path))
+        if (selectedNodes.length === 1) {
+            return selectedNodes[0]
+        }
+
+        if (selectedNodes.length > 1) {
+            return this.showRepositoryPicker(selectedNodes, pickerPlaceholder)
+        }
+
         const activeFilePath = vscode.window.activeTextEditor?.document.uri.fsPath
 
         const repositoryNode = activeFilePath
@@ -490,6 +503,16 @@ export class Commands {
             return repositoryNode
         }
 
+        return this.showRepositoryPicker(nodes, pickerPlaceholder)
+    }
+
+    /**
+     * Shows a repository picker for the specified candidates.
+     */
+    private showRepositoryPicker = async (
+        nodes: RepositoryNode[],
+        pickerPlaceholder: string,
+    ): Promise<RepositoryNode | undefined> => {
         const items = nodes.map((repositoryNode) => ({
             label: this.stashLabels.getName(repositoryNode),
             node: repositoryNode,
