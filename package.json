@@ -60,7 +60,10 @@
                     "description": "Search depth for finding repositories on subdirectories. If value is negative parent directory repositories will be searched"
                 },
                 "gitstash.advanced.ignoredDirectories": {
-                    "type": "string[]",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
                     "default": [
                         "__pycache__",
                         ".docker",
