@@ -101,9 +101,9 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
     const watcherManager = new FileSystemWatcherManager(
         repos,
-        (projectDirectory: Uri) => {
-            global.dbg(`[watch] Reloading explorer (${projectDirectory.fsPath})...`)
-            treeProvider.reload('update', projectDirectory)
+        (event, projectDirectory) => {
+            global.dbg(`[watch] Reloading explorer (${projectDirectory})...`)
+            treeProvider.reload('update', Uri.file(projectDirectory))
         },
     )
     global.dbg('[boot] FS Watcher created')
